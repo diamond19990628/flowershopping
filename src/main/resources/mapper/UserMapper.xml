@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.flowershopping.manager.Mapper.UserLoginMapper">
+
+    <select id="selectByOpenId" parameterType="com.web.flowershopping.manager.Entity.User" resultType="com.web.flowershopping.manager.Entity.User">
+        select * from `USER_MASTER` where openid = #{openid} AND is_admin = 1
+    </select>
+
+    <!-- 插入用户 -->
+    <insert id="insertUser"
+            parameterType="com.web.flowershopping.manager.Entity.User">
+
+        insert into USER_MASTER(openid, nickname, is_admin)
+        values (#{openid}, #{nickName}, 1)
+
+    </insert>
+
+</mapper>
