@@ -1,9 +1,13 @@
 package com.web.flowershopping.manager.Entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result {
     Object data;
 	String msg;
 	int status;
+	String token;
     public Object getData() {
 		return data;
 	}
@@ -22,9 +26,15 @@ public class Result {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	public String getToken(){
+		return token;
+	}
+	public void setToken(String token){
+		this.token = token;
+	}
     @Override
 	public String toString() {
 		return "Resultmsg [data=" + data + ", msg=" + msg + ", status="
-				+ status + "]";
+				+ status + ", token="+token+"]";
 	}
 }
