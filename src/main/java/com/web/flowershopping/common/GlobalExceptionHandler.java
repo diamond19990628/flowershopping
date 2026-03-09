@@ -1,19 +1,32 @@
 package com.web.flowershopping.common;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.web.flowershopping.common.Exception.LoginException;
+import com.web.flowershopping.common.Exception.TokenException;
 import com.web.flowershopping.manager.Entity.Result;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(LoginException.class)
-    public Result handleException(LoginException e) {
+    public ResponseEntity<Result> handleException(LoginException e) {
 
         Result result = new Result();
         result.setStatus(401);
         result.setMsg(e.getMessage());
 
-        return result;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+    }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<Result> handleException(TokenException e) {
+
+        Result result = new Result();
+        result.setStatus(403);
+        result.setMsg("服务器异常");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
     }
 }

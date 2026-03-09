@@ -16,10 +16,10 @@ public class indexController {
     @Resource
     ProductService productservice;
 
-    @GetMapping("/product")    
-    public Result productGateway(HttpServletRequest request) throws Exception{
+    @GetMapping("/product")
+    public Result productGateway(HttpServletRequest request){
         String token = request.getHeader("token");
-        sessions.auth_session(request,token);
+        sessions.auth_session(request, token);
         Result result = productservice.selectAllProduct();
         return result;
     }

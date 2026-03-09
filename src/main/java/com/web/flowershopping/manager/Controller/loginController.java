@@ -26,7 +26,7 @@ public class loginController {
         Result result = userloginService.selectByOpenId(user);
         if(result.getStatus() == 200){
             String token = UUID.randomUUID().toString();
-            session.setAttribute("user_id", user.getUserId());
+            session.setAttribute("user_id", result.getData());
             session.setAttribute("token", token);
             result.setToken(token);
         }
