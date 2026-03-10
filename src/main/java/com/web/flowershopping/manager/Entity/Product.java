@@ -13,6 +13,7 @@ public class Product {
     private LocalDateTime entryDate;
     private LocalDateTime updateDate;
     private Integer stock;
+    private Integer status;
 
     private AttachedFIlePhoto attachedFile;
 
@@ -77,7 +78,12 @@ public class Product {
     public void setStock(Integer stock){
         this.stock = stock;
     }
-
+    public void setStatus(Integer status){
+        this.status = status;
+    }
+    public Integer getStatus(){
+        return status;
+    }
     @Override
     public String toString() {
         return "Product{" +

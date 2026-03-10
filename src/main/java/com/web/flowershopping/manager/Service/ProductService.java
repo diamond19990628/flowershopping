@@ -6,5 +6,5 @@ import com.web.flowershopping.manager.Entity.Result;
 
 @Service
 public interface ProductService {
-    Result selectAllProduct();
+    Result selectAllProduct(String product_name,Integer status,boolean Low_Stock);
 }

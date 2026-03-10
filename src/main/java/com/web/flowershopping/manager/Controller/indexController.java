@@ -1,6 +1,7 @@
 package com.web.flowershopping.manager.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.flowershopping.common.sessions;
@@ -17,10 +18,10 @@ public class indexController {
     ProductService productservice;
 
     @GetMapping("/product")
-    public Result productGateway(HttpServletRequest request){
+    public Result productGateway(HttpServletRequest request,@RequestParam(required = false)String product_name,@RequestParam(defaultValue = "0")Integer status,@RequestParam(defaultValue = "false")boolean Low_Stock){
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
-        Result result = productservice.selectAllProduct();
+        Result result = productservice.selectAllProduct(product_name,status,Low_Stock);
         return result;
     }
 }

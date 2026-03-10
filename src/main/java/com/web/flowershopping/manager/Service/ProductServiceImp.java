@@ -15,8 +15,13 @@ public class ProductServiceImp implements ProductService{
     @Resource
     ProductMapper productmapper;
 
-    public Result selectAllProduct(){
-        List<Product> productListResult = productmapper.selectAllProduct();
+    public Result selectAllProduct(String product_name,Integer status,boolean Low_Stock){
+        Product productReadDTO = new Product();
+        if(product_name != null){
+            productReadDTO.setProductName(product_name);
+        }
+        productReadDTO.setStatus(status);
+        List<Product> productListResult = productmapper.selectAllProduct(productReadDTO,Low_Stock);
         Result result = new Result();
         result.setData(productListResult);
         result.setStatus(200);
