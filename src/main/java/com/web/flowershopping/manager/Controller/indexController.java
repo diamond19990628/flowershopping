@@ -52,8 +52,8 @@ public class indexController {
     // category专属
     @GetMapping("/categories")
     public Result getMethodName(HttpServletRequest request) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = categoryService.selectAllCategory();
         return result;
     }
