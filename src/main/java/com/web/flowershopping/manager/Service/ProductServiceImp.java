@@ -1,6 +1,7 @@
 package com.web.flowershopping.manager.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Transactional
-    public Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file)throws Exception{
+    public Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file){
         
         File dir = new File(upload_path);
         if(!dir.exists()){
@@ -52,7 +53,11 @@ public class ProductServiceImp implements ProductService{
         // 文件上传
         String filename = file.getOriginalFilename();
         File dest = new File(upload_path + filename);
+        try {
         file.transferTo(dest);
+        } catch (IOException e) {
+            throw new CreateException("文件上传失败");
+        }
         Product productCreateDTO = new Product();
         AttachedFIlePhoto attachedFilePhoto = new AttachedFIlePhoto();
         attachedFilePhoto.setAttachedFilePath(upload_path);

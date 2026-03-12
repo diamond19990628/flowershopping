@@ -39,11 +39,7 @@ public class indexController {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
         Result result = new Result();
-        try{
-            result = productservice.createProduct(productName,amount,stock,category_id,attached_file);
-        }catch(Exception e){
-            System.out.println(e);
-        }
+        result = productservice.createProduct(productName,amount,stock,category_id,attached_file);
         return result;
     }
     
