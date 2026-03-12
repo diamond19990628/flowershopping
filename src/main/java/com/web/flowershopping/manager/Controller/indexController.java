@@ -36,8 +36,8 @@ public class indexController {
                                 @RequestParam("category") Integer category_id,
                                 @RequestParam("attached_file") MultipartFile attached_file
                                 ) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = new Result();
         try{
             result = productservice.createProduct(productName,amount,stock,category_id,attached_file);
