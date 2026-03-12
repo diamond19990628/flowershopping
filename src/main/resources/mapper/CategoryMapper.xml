@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.flowershopping.manager.Mapper.CategoryMapper">
+    <select id="selectAllCategories" resultType="map">
+        select
+            cm1.category_id,
+            cm1.category_name,
+            cm1.child_category_id,
+            CASE WHEN cm2.category_name IS NULL
+            THEN '' ELSE cm2.category_name
+            END AS child_category_name
+        from
+            category_master cm1
+            LEFT JOIN
+                category_master cm2
+            ON  cm1.category_id = cm2.child_category_id
+    </select>
+
+</mapper>

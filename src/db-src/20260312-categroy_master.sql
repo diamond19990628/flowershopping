@@ -13,18 +13,6 @@ create table category_master(
     update_date DATETIME NOT NULL
 );
 
-select * from stock_master
-select * from product_master
-select * from attached_file_master
-select * from category_master
-delete from stock_master;
-delete from product_master;
-delete from attached_file_master;
-delete from category_master;
-
-select * from category_master where category_id = 1
-
-select * from product_category
 
 
 

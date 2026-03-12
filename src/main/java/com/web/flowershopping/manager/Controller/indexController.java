@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.web.flowershopping.common.sessions;
 import com.web.flowershopping.manager.Entity.Result;
+import com.web.flowershopping.manager.Service.CategoryService;
 import com.web.flowershopping.manager.Service.ProductService;
 
 import jakarta.annotation.Resource;
@@ -20,6 +21,10 @@ public class indexController {
     @Resource
     ProductService productservice;
 
+    @Resource
+    CategoryService categoryService;
+
+    // 产品管理专属
     @GetMapping("/product")
     public Result productGateway(HttpServletRequest request,@RequestParam(required = false)String product_name,@RequestParam(defaultValue = "0")Integer status,@RequestParam(defaultValue = "false")boolean Low_Stock){
         String token = request.getHeader("token");
@@ -40,6 +45,16 @@ public class indexController {
         sessions.auth_session(request, token);
         Result result = new Result();
         result = productservice.createProduct(productName,amount,stock,category_id,attached_file);
+        return result;
+    }
+    
+
+    // category专属
+    @GetMapping("/categories")
+    public Result getMethodName(HttpServletRequest request) {
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Result result = categoryService.selectAllCategory();
         return result;
     }
     
