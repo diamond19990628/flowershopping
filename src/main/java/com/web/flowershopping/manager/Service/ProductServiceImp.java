@@ -89,13 +89,15 @@ public class ProductServiceImp implements ProductService{
         Result result = new Result();
         result.setStatus(200);
         Map<String,Object> Resultdata = new HashMap<String,Object>();
-        Resultdata.put("product_id", product_id);
-        Resultdata.put("product_name", productCreateDTO.getProductName());
+        Resultdata.put("productId", product_id);
+        Resultdata.put("productName", productCreateDTO.getProductName());
         Resultdata.put("category_id", categoryDTO.getCategoryId());
         Resultdata.put("category_name", categoryResult.getCategoryName());
         Resultdata.put("amount",productCreateDTO.getAmount());
-        Resultdata.put("Stock",createProductCategoryDTO.getStock());
-        Resultdata.put("attached_file_path", upload_path+filename);
+        Resultdata.put("stock",createProductCategoryDTO.getStock());
+        AttachedFIlePhoto attachedFileResult = new AttachedFIlePhoto();
+        attachedFileResult.setAttachedFileId(attached_file_id);
+        attachedFileResult.setAttachedFilePath(upload_path + filename);
         result.setData(Resultdata);
         return result;
     }
