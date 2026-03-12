@@ -56,4 +56,48 @@
         </where>
     </select>
 
+    <insert id="createAttachedFile" useGeneratedKeys="true" keyProperty="attachedFile.attachedFileId">
+        insert into attached_file_master(
+            attached_file_path,
+            entry_date,
+            update_date
+        )values(
+            #{attachedFile.attachedFilePath},
+            #{attachedFile.entryDate},
+            #{attachedFile.updateDate}
+        )
+    </insert>
+
+    <insert id="createProduct" useGeneratedKeys="true" keyProperty="product.productId">
+        INSERT INTO product_master 
+        (product_name, attached_file_id, amount, status, entry_date, update_date)
+        VALUES
+        (#{product.productName}, #{product.attachedFileId}, #{product.amount}, #{product.status}, NOW(), NOW())
+    </insert>
+
+    <insert id="createStock">
+        INSERT INTO stock_master(
+            product_id,
+            stock_count
+        )VALUES(
+            #{product.productId},
+            #{product.stock}
+        )
+    </insert>
+
+    <!-- category调查 -->
+    <select id="selectCategory">
+        select * from category_master
+        where category_id = #{categoryId}
+    </select>
+
+    <insert id="createProductCategory">
+        INSERT INTO
+            product_category
+        values(
+            #{category.category_id},
+            #{product.productId},
+            now()
+        )
+    </insert>
 </mapper>

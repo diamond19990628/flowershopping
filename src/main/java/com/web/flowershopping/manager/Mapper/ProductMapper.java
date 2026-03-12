@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
+import com.web.flowershopping.manager.Entity.Category;
 import com.web.flowershopping.manager.Entity.Product;
 
 @Mapper
@@ -13,4 +15,20 @@ public interface ProductMapper {
         @Param("product") Product product,
         @Param("Low_Stock") boolean Low_Stock
     );
+
+    int createAttachedFile(
+        @Param("attachedFile") AttachedFIlePhoto attachedFIlePhoto
+    );
+
+    int createProductCategory(
+        @Param("category") Category category,
+        @Param("product") Product product
+    );
+    int createProduct(
+        @Param("product") Product product
+    );
+
+    void createStock(@Param("product") Product product);
+
+    Category selectCategory(@Param("categoryId") int category_id);
 }

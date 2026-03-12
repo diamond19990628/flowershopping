@@ -17,6 +17,8 @@ public class Product {
 
     private AttachedFIlePhoto attachedFile;
 
+    private Category category;
+
     public Integer getProductId() {
         return productId;
     }
@@ -84,6 +86,14 @@ public class Product {
     public Integer getStatus(){
         return status;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
     @Override
     public String toString() {
         return "Product{" +
@@ -95,6 +105,7 @@ public class Product {
                 ", updateDate=" + updateDate +
                 ", attachedFile=" + attachedFile +
                 ", stock="+stock+
+                ", category="+category+
                 '}';
     }
 }

@@ -45,7 +45,7 @@ select
                 attached_file_master
             ON  attached_file_master.attached_file_id = product_master.attached_file_id
 CREATE TABLE attached_file_master(
-    attached_file_id int NOT NULL PRIMARY KEY,
+    attached_file_id int AUTO_INCREMENT NOT NULL PRIMARY KEY,
     attached_file_path VARCHAR(256) NOT NULL,
     entry_date DATETIME NOT NULL,
     update_date DATETIME NOT NULL
@@ -54,6 +54,7 @@ CREATE TABLE stock_master(
     product_id int not null PRIMARY KEY,
     stock_count int not null
 )
+select * from product_master
 INSERT INTO stock_master VALUES
 (2,50),
 (3,20),
