@@ -87,8 +87,8 @@ public class indexController {
         @PathVariable("product_id")Integer product_id,
         @RequestBody Product product
     ){
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = productservice.UnlistProduct(product_id, product.getStatus());
         return result;
 

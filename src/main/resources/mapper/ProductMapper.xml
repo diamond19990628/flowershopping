@@ -13,6 +13,8 @@
         <result property="amount" column="amount"/>
 
         <result property="stock" column="stock_count"/>
+
+        <result property="status" column="status"/>
     
         <association property="attachedFile"
             javaType="com.web.flowershopping.manager.Entity.AttachedFIlePhoto">
@@ -31,6 +33,7 @@
         select
             product_master.product_id,
             product_master.product_name,
+            product_master.status,
             CASE
                 WHEN attached_file_master.attached_file_id IS NULL THEN 0
                 ELSE attached_file_master.attached_file_id
@@ -74,6 +77,7 @@
         select
             product_master.product_id,
             product_master.product_name,
+            product_master.status,
             CASE
                 WHEN attached_file_master.attached_file_id IS NULL THEN 0
                 ELSE attached_file_master.attached_file_id
