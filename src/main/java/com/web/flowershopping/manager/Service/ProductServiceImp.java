@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.ReadException;
 import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
@@ -27,6 +28,9 @@ public class ProductServiceImp implements ProductService{
     @Resource
     ProductMapper productmapper;
 
+    @Resource
+    getImagePath getimagePath;
+
     @Value("${upload.path}")
     String upload_path;
 
@@ -36,7 +40,11 @@ public class ProductServiceImp implements ProductService{
             productReadDTO.setProductName(product_name);
         }
         productReadDTO.setStatus(status);
-        List<Map<String,Object>> productListResult = productmapper.selectAllProduct(productReadDTO,Low_Stock);
+        List<Product> productListResult = productmapper.selectAllProduct(productReadDTO,Low_Stock);
+        for(Product product : productListResult){
+            String imagePath = getimagePath.changeImagePath(product.getAttachedFile().getAttachedFilePath());
+            product.getAttachedFile().setAttachedFilePath(imagePath);
+        }
         Result result = new Result();
         result.setData(productListResult);
         result.setStatus(200);
@@ -49,6 +57,11 @@ public class ProductServiceImp implements ProductService{
         if(productListResult==null){
             throw new ReadException("商品不存在或者已经被删除");
         }
+        String imagePath = getimagePath.changeImagePath(productListResult.getAttachedFile().getAttachedFilePath());
+        AttachedFIlePhoto newAttachedFile = new AttachedFIlePhoto();
+        newAttachedFile.setAttachedFileId(productListResult.getAttachedFileId());
+        newAttachedFile.setAttachedFilePath(imagePath);
+        productListResult.setAttachedFile(newAttachedFile);
         Result result = new Result();
         result.setData(productListResult);
         result.setStatus(200);
@@ -72,7 +85,7 @@ public class ProductServiceImp implements ProductService{
         }
         Product productCreateDTO = new Product();
         AttachedFIlePhoto attachedFilePhoto = new AttachedFIlePhoto();
-        attachedFilePhoto.setAttachedFilePath(upload_path);
+        attachedFilePhoto.setAttachedFilePath(upload_path+filename);
         attachedFilePhoto.setEntryDate(LocalDateTime.now());
         attachedFilePhoto.setUpdateDate(LocalDateTime.now());
         // 添加图片文件进数据库
@@ -111,7 +124,8 @@ public class ProductServiceImp implements ProductService{
         Resultdata.put("stock",createProductCategoryDTO.getStock());
         AttachedFIlePhoto attachedFileResult = new AttachedFIlePhoto();
         attachedFileResult.setAttachedFileId(attached_file_id);
-        attachedFileResult.setAttachedFilePath(upload_path + filename);
+        String imagePath = getimagePath.changeImagePath(upload_path + filename);
+        attachedFileResult.setAttachedFilePath(imagePath);
         Resultdata.put("attachedFile",attachedFileResult);
         result.setData(Resultdata);
         return result;
