@@ -3,6 +3,7 @@ package com.web.flowershopping.manager.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import com.web.flowershopping.manager.Service.ProductService;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+
 
 
 
@@ -60,10 +62,25 @@ public class indexController {
         return result;
     }
     
+    // 更新产品（PUT）
+    @PutMapping("/product/{product_id}")
+    public Result updateProduct(HttpServletRequest request,
+                                @PathVariable("product_id")Integer product_id,
+                                @RequestParam("product_name") String productName,
+                                @RequestParam("amount") Integer amount,
+                                @RequestParam("stock") Integer stock,
+                                @RequestParam("category") Integer category_id,
+                                @RequestParam("attached_file") MultipartFile attached_file                        
+                                ) {
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Result result = productservice.updateProduct(product_id, productName, amount, stock, category_id, attached_file);
+        return result;
+    }
 
     // category专属
     @GetMapping("/categories")
-    public Result getMethodName(HttpServletRequest request) {
+    public Result getCategory(HttpServletRequest request) {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
         Result result = categoryService.selectAllCategory();

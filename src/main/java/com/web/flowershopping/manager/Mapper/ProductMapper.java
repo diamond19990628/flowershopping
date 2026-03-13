@@ -21,6 +21,10 @@ public interface ProductMapper {
     int createAttachedFile(
         @Param("attachedFile") AttachedFIlePhoto attachedFIlePhoto
     );
+    
+    void deleteAttachedFile(
+        @Param("attachedFile") AttachedFIlePhoto attachedFIlePhoto
+    );
 
     int createProductCategory(
         @Param("category") Category category,
@@ -30,7 +34,15 @@ public interface ProductMapper {
         @Param("product") Product product
     );
 
+    void updateProduct(
+        @Param("product") Product product
+    );
+
     void createStock(@Param("product") Product product);
 
+    void updateStock(@Param("product") Product product);
+
     Category selectCategory(@Param("categoryId") int category_id);
+
+    void updateProductCategory(@Param("product") Product product);
 }

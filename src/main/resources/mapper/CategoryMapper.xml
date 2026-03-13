@@ -19,4 +19,17 @@
             ON  cm1.category_id = cm2.child_category_id
     </select>
 
+    <select id="selectCategoryWithID">
+        select
+            cm1.category_id,
+            cm1.category_name
+        from
+            category_master cm1
+        WHERE cm1.category_id = #{category_id}
+    </select>
+
+    <delete id="deleteCategoryWithID">
+        DELETE FROM 
+    </delete>
+
 </mapper>

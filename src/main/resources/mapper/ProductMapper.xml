@@ -115,12 +115,36 @@
         )
     </insert>
 
+    <delete id="deleteAttachedFile">
+        DELETE FROM attached_file_master
+        WHERE attached_file_id = #{attachedFile.attachedFileId}
+    </delete>
+
     <insert id="createProduct" useGeneratedKeys="true" keyProperty="product.productId">
         INSERT INTO product_master 
         (product_name, attached_file_id, amount, status, entry_date, update_date)
         VALUES
         (#{product.productName}, #{product.attachedFileId}, #{product.amount}, #{product.status}, NOW(), NOW())
     </insert>
+
+    <update id="updateProduct">
+        update product_master
+        <set>
+            <if test="product.productName != null">
+                product_name = #{product.productName},
+            </if>
+
+            <if test="product.amount != 0">
+                amount = #{product.amount},
+            </if>
+
+            <if test="product.attachedFile != null and product.attachedFile.attachedFileId != null">
+                attached_file_id = #{product.attachedFile.attachedFileId},
+            </if>
+            update_date = now()
+        </set>
+        WHERE product_id = #{product.productId}
+    </update>
 
     <insert id="createStock">
         INSERT INTO stock_master(
@@ -131,6 +155,16 @@
             #{product.stock}
         )
     </insert>
+
+    <update id="updateStock">
+        update stock_master
+        <set>
+            <if test="product.stock != 0">
+                stock_count = #{product.stock}
+            </if>
+        </set>
+       WHERE product_id = #{product.productId}
+    </update>
 
     <!-- category调查 -->
     <select id="selectCategory">
@@ -147,4 +181,14 @@
             now()
         )
     </insert>
+
+    <update id="updateProductCategory">
+        UPDATE product_category
+        <set>
+            <if test="product.category.category_id != null">
+                category_id = #{product.category.category_id}
+            </if>
+        </set>
+        WHERE product_id = #{product.productId}
+    </update>
 </mapper>

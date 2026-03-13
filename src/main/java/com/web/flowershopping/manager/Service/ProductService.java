@@ -12,4 +12,6 @@ public interface ProductService {
     Result selectProductWithID(Integer product_id);
 
     Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file);
+
+    Result updateProduct(Integer product_id,String product_name,Integer amount,Integer stock,Integer category,MultipartFile file);
 }

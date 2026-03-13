@@ -2,15 +2,20 @@ package com.web.flowershopping.manager.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.CreateException;
@@ -19,6 +24,7 @@ import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
 import com.web.flowershopping.manager.Entity.Category;
 import com.web.flowershopping.manager.Entity.Product;
 import com.web.flowershopping.manager.Entity.Result;
+import com.web.flowershopping.manager.Mapper.CategoryMapper;
 import com.web.flowershopping.manager.Mapper.ProductMapper;
 
 import jakarta.annotation.Resource;
@@ -27,6 +33,9 @@ import jakarta.annotation.Resource;
 public class ProductServiceImp implements ProductService{
     @Resource
     ProductMapper productmapper;
+
+    @Resource
+    CategoryMapper categoryMapper;
 
     @Resource
     getImagePath getimagePath;
@@ -79,7 +88,7 @@ public class ProductServiceImp implements ProductService{
         String filename = file.getOriginalFilename();
         File dest = new File(upload_path + filename);
         try {
-        file.transferTo(dest);
+            file.transferTo(dest);
         } catch (IOException e) {
             throw new CreateException("文件上传失败");
         }
@@ -113,6 +122,7 @@ public class ProductServiceImp implements ProductService{
         productmapper.createProductCategory(categoryDTO, productCreateDTO);
         Result result = new Result();
         result.setStatus(200);
+        // response
         Map<String,Object> Resultdata = new HashMap<String,Object>();
         Resultdata.put("productId", product_id);
         Resultdata.put("productName", productCreateDTO.getProductName());
@@ -128,6 +138,80 @@ public class ProductServiceImp implements ProductService{
         attachedFileResult.setAttachedFilePath(imagePath);
         Resultdata.put("attachedFile",attachedFileResult);
         result.setData(Resultdata);
+        return result;
+    }
+
+    // 更新商品信息
+    @Transactional
+    public Result updateProduct(Integer product_id,String product_name,Integer amount,Integer stock,Integer category,MultipartFile file){
+        // 查询现有的情报
+        Product productInfoResult = productmapper.selectProductWithID(product_id);
+        if(productInfoResult==null){
+            throw new ReadException("该产品已经被删除，无法更改");
+        }
+        AttachedFIlePhoto attachedReadDTO = new AttachedFIlePhoto();
+        attachedReadDTO.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
+        attachedReadDTO.setAttachedFilePath(productInfoResult.getAttachedFile().getAttachedFilePath());
+        // 删除老的图片(数据库)
+        productmapper.deleteAttachedFile(attachedReadDTO);
+        Path filepath = Paths.get(attachedReadDTO.getAttachedFilePath());
+        try{
+            Files.deleteIfExists(filepath);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"删除图片失败");
+        }
+        // 文件上传
+        String filename = file.getOriginalFilename();
+        File dest = new File(upload_path + filename);
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            throw new CreateException("文件上传失败");
+        }
+        // 文件数据库写入
+        AttachedFIlePhoto attachedFIleUpdateDTO = new AttachedFIlePhoto();
+        attachedFIleUpdateDTO.setAttachedFilePath(upload_path+filename);
+        attachedFIleUpdateDTO.setEntryDate(LocalDateTime.now());
+        attachedFIleUpdateDTO.setUpdateDate(LocalDateTime.now());
+        productmapper.createAttachedFile(attachedFIleUpdateDTO);
+        // 检查category是否存在
+        Category categoryResult = categoryMapper.selectCategoryWithID(category);
+        if(categoryResult == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"分类已经被删除，无法修改");
+        }
+
+        // 更新产品信息
+        Product productUpdateDTO = new Product();
+        productUpdateDTO.setProductId(product_id);
+        productUpdateDTO.setProductName(product_name);
+        productUpdateDTO.setAttachedFile(attachedFIleUpdateDTO);
+        productUpdateDTO.setStock(stock);
+        productUpdateDTO.setAmount(amount);
+        productUpdateDTO.setCategory(categoryResult);
+        // 更新主表
+        productmapper.updateProduct(productUpdateDTO);
+        // 更新库存
+        productmapper.updateStock(productUpdateDTO);
+        // 更新category
+        productmapper.updateProductCategory(productUpdateDTO);
+        Result result = new Result();
+        // 设置response
+        Map<String,Object> Resultdata = new HashMap<String,Object>();
+        Resultdata.put("productId", product_id);
+        Resultdata.put("productName", product_name);
+        Category categoryInfo = new Category();
+        categoryInfo.setCategoryId(categoryResult.getCategoryId());
+        categoryInfo.setCategoryName(categoryResult.getCategoryName());
+        Resultdata.put("category",categoryInfo);
+        Resultdata.put("amount",amount);
+        Resultdata.put("stock",stock);
+        AttachedFIlePhoto attachedFileResult = new AttachedFIlePhoto();
+        attachedFileResult.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
+        String imagePath = getimagePath.changeImagePath(upload_path + filename);
+        attachedFileResult.setAttachedFilePath(imagePath);
+        Resultdata.put("attachedFile",attachedFileResult);
+        result.setData(Resultdata);
+        result.setStatus(200);
         return result;
     }
 }
