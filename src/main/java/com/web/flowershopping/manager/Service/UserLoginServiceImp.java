@@ -23,6 +23,7 @@ public class UserLoginServiceImp implements UserLoginService{
             result.setData(userInfoResult);
             result.setMsg("success");
         }else{
+            userLoginMapper.insertUser(user);
             result.setStatus(404);
             result.setMsg("User not found");
         }
