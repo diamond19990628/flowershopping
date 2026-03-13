@@ -150,30 +150,38 @@ public class ProductServiceImp implements ProductService{
             throw new ReadException("该产品已经被删除，无法更改");
         }
         AttachedFIlePhoto attachedReadDTO = new AttachedFIlePhoto();
-        attachedReadDTO.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
-        attachedReadDTO.setAttachedFilePath(productInfoResult.getAttachedFile().getAttachedFilePath());
-        // 删除老的图片(数据库)
-        productmapper.deleteAttachedFile(attachedReadDTO);
-        Path filepath = Paths.get(attachedReadDTO.getAttachedFilePath());
-        try{
-            Files.deleteIfExists(filepath);
-        }catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"删除图片失败");
+        Product productUpdateDTO = new Product();
+        String filename = "";
+        String imagePath = "";
+        if(file != null){
+            attachedReadDTO.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
+            attachedReadDTO.setAttachedFilePath(productInfoResult.getAttachedFile().getAttachedFilePath());
+            // 删除老的图片(数据库)
+            productmapper.deleteAttachedFile(attachedReadDTO);
+            // 删除真实文件
+            Path filepath = Paths.get(attachedReadDTO.getAttachedFilePath());
+            try{
+                Files.deleteIfExists(filepath);
+            }catch(Exception e){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"删除图片失败");
+            }
+            // 文件上传
+            filename = file.getOriginalFilename();
+            File dest = new File(upload_path + filename);
+            try {
+                file.transferTo(dest);
+            } catch (IOException e) {
+                throw new CreateException("文件上传失败");
+            }
+            // 文件数据库写入
+            AttachedFIlePhoto attachedFIleUpdateDTO = new AttachedFIlePhoto();
+            attachedFIleUpdateDTO.setAttachedFilePath(upload_path+filename);
+            attachedFIleUpdateDTO.setEntryDate(LocalDateTime.now());
+            attachedFIleUpdateDTO.setUpdateDate(LocalDateTime.now());
+            productmapper.createAttachedFile(attachedFIleUpdateDTO);
+            productUpdateDTO.setAttachedFile(attachedFIleUpdateDTO);
         }
-        // 文件上传
-        String filename = file.getOriginalFilename();
-        File dest = new File(upload_path + filename);
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            throw new CreateException("文件上传失败");
-        }
-        // 文件数据库写入
-        AttachedFIlePhoto attachedFIleUpdateDTO = new AttachedFIlePhoto();
-        attachedFIleUpdateDTO.setAttachedFilePath(upload_path+filename);
-        attachedFIleUpdateDTO.setEntryDate(LocalDateTime.now());
-        attachedFIleUpdateDTO.setUpdateDate(LocalDateTime.now());
-        productmapper.createAttachedFile(attachedFIleUpdateDTO);
+        
         // 检查category是否存在
         Category categoryResult = categoryMapper.selectCategoryWithID(category);
         if(categoryResult == null){
@@ -181,10 +189,8 @@ public class ProductServiceImp implements ProductService{
         }
 
         // 更新产品信息
-        Product productUpdateDTO = new Product();
         productUpdateDTO.setProductId(product_id);
         productUpdateDTO.setProductName(product_name);
-        productUpdateDTO.setAttachedFile(attachedFIleUpdateDTO);
         productUpdateDTO.setStock(stock);
         productUpdateDTO.setAmount(amount);
         productUpdateDTO.setCategory(categoryResult);
@@ -207,7 +213,11 @@ public class ProductServiceImp implements ProductService{
         Resultdata.put("stock",stock);
         AttachedFIlePhoto attachedFileResult = new AttachedFIlePhoto();
         attachedFileResult.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
-        String imagePath = getimagePath.changeImagePath(upload_path + filename);
+        if(file != null){
+            imagePath = getimagePath.changeImagePath(upload_path + filename);
+        }else{
+            imagePath = getimagePath.changeImagePath(productInfoResult.getAttachedFile().getAttachedFilePath());
+        }
         attachedFileResult.setAttachedFilePath(imagePath);
         Resultdata.put("attachedFile",attachedFileResult);
         result.setData(Resultdata);

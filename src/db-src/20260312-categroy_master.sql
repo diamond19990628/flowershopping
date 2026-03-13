@@ -23,6 +23,8 @@ delete from product_master;
 delete from attached_file_master;
 delete from product_category;
 
+select * from attached_file_master
+
 select * from product_category;
 
 select
@@ -32,8 +34,6 @@ select
             category_master cm1
         WHERE cm1.category_id = 1
 
-update product_master
-set product_name = 1
 
 select * from product_master
 
