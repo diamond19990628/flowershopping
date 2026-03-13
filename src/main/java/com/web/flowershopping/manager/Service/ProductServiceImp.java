@@ -224,4 +224,20 @@ public class ProductServiceImp implements ProductService{
         result.setStatus(200);
         return result;
     }
+
+    // 下架产品
+    @Transactional
+    public Result UnlistProduct(Integer product_id,Integer status){
+        Product productUpdateDTO = new Product();
+        productUpdateDTO.setProductId(product_id);
+        productUpdateDTO.setStatus(status);
+        productmapper.updateProductStatus(productUpdateDTO);
+        Result result = new Result();
+        result.setStatus(200);
+        Map<String,Object> resultData = new HashMap<String,Object>();
+        resultData.put("product_id", product_id);
+        resultData.put("status",status);
+        result.setData(resultData);
+        return result;
+    }
 }

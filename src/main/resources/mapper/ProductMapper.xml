@@ -146,6 +146,16 @@
         WHERE product_id = #{product.productId}
     </update>
 
+    <update id="updateProductStatus">
+        update product_master
+        <set>
+            <if test="product.status != null">
+                status = #{product.status}
+            </if>
+        </set>
+        WHERE product_id = #{product.productId}
+    </update>
+
     <insert id="createStock">
         INSERT INTO stock_master(
             product_id,

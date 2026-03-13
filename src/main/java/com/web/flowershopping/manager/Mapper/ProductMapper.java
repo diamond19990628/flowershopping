@@ -38,6 +38,10 @@ public interface ProductMapper {
         @Param("product") Product product
     );
 
+    void updateProductStatus(
+        @Param("product") Product product
+    );
+
     void createStock(@Param("product") Product product);
 
     void updateStock(@Param("product") Product product);

@@ -40,5 +40,9 @@ select * from product_master
 select * from stock_master
 
 
+ALTER TABLE stock_master
+ADD INDEX idx_stock_count (stock_count);
 
+ALTER TABLE product_master
+ADD INDEX idx_status (status);
 
