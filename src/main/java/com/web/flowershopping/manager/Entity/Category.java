@@ -2,6 +2,8 @@ package com.web.flowershopping.manager.Entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Category {
     private int category_id;
     private String category_name;

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.web.flowershopping.common.Exception.CreateException;
+import com.web.flowershopping.common.Exception.ReadException;
 import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
 import com.web.flowershopping.manager.Entity.Category;
 import com.web.flowershopping.manager.Entity.Product;
@@ -35,11 +36,22 @@ public class ProductServiceImp implements ProductService{
             productReadDTO.setProductName(product_name);
         }
         productReadDTO.setStatus(status);
-        List<Product> productListResult = productmapper.selectAllProduct(productReadDTO,Low_Stock);
+        List<Map<String,Object>> productListResult = productmapper.selectAllProduct(productReadDTO,Low_Stock);
         Result result = new Result();
         result.setData(productListResult);
         result.setStatus(200);
         result.setMsg("success");
+        return result;
+    }
+
+    public Result selectProductWithID(Integer product_id){
+        Product productListResult = productmapper.selectProductWithID(product_id);
+        if(productListResult==null){
+            throw new ReadException("商品不存在或者已经被删除");
+        }
+        Result result = new Result();
+        result.setData(productListResult);
+        result.setStatus(200);
         return result;
     }
 
@@ -91,13 +103,16 @@ public class ProductServiceImp implements ProductService{
         Map<String,Object> Resultdata = new HashMap<String,Object>();
         Resultdata.put("productId", product_id);
         Resultdata.put("productName", productCreateDTO.getProductName());
-        Resultdata.put("category_id", categoryDTO.getCategoryId());
-        Resultdata.put("category_name", categoryResult.getCategoryName());
+        Category categoryInfo = new Category();
+        categoryInfo.setCategoryId(categoryDTO.getCategoryId());
+        categoryInfo.setCategoryName(categoryResult.getCategoryName());
+        Resultdata.put("category",categoryInfo);
         Resultdata.put("amount",productCreateDTO.getAmount());
         Resultdata.put("stock",createProductCategoryDTO.getStock());
         AttachedFIlePhoto attachedFileResult = new AttachedFIlePhoto();
         attachedFileResult.setAttachedFileId(attached_file_id);
         attachedFileResult.setAttachedFilePath(upload_path + filename);
+        Resultdata.put("attachedFile",attachedFileResult);
         result.setData(Resultdata);
         return result;
     }

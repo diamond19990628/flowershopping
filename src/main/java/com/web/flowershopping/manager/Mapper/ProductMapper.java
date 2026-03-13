@@ -1,6 +1,7 @@
 package com.web.flowershopping.manager.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,10 +12,12 @@ import com.web.flowershopping.manager.Entity.Product;
 
 @Mapper
 public interface ProductMapper {
-    List<Product> selectAllProduct(
+    List<Map<String,Object>> selectAllProduct(
         @Param("product") Product product,
         @Param("Low_Stock") boolean Low_Stock
     );
+
+    Product selectProductWithID(@Param("product_id")Integer product_id);
 
     int createAttachedFile(
         @Param("attachedFile") AttachedFIlePhoto attachedFIlePhoto

@@ -20,6 +20,12 @@
             <result property="attachedFilePath" column="attached_file_path"/>
     
         </association>
+        <association property="category" 
+            javaType="com.web.flowershopping.manager.Entity.Category">
+            <result property="category_id" column="category_id"/>
+
+            <result property="category_name" column="category_name"/>
+        </association>
     </resultMap>
     <select id="selectAllProduct" resultMap="productMap">
         select
@@ -34,7 +40,9 @@
                 ELSE attached_file_master.attached_file_path
             END AS attached_file_path,
             product_master.amount,
-            stock_master.stock_count
+            stock_master.stock_count,
+            product_category.category_id,
+            category_master.category_name
         from
             product_master
             INNER JOIN
@@ -43,6 +51,12 @@
             LEFT JOIN
                 attached_file_master
             ON  attached_file_master.attached_file_id = product_master.attached_file_id
+            LEFT JOIN 
+                product_category
+            ON product_category.product_id = product_master.product_id
+            LEFT JOIN
+                category_master
+            ON category_master.category_id = product_category.category_id
         <where>
             <if test="product.productName != null and product.productName != ''">
                 AND product_master.product_name LIKE CONCAT('%', #{product.productName}, '%')
@@ -54,6 +68,39 @@
                 AND stock_master.stock_count &lt; 60
             </if>
         </where>
+    </select>
+
+    <select id="selectProductWithID" resultMap="productMap">
+        select
+            product_master.product_id,
+            product_master.product_name,
+            CASE
+                WHEN attached_file_master.attached_file_id IS NULL THEN 0
+                ELSE attached_file_master.attached_file_id
+            END AS attached_file_id,
+            CASE
+                WHEN attached_file_master.attached_file_path IS NULL THEN ""
+                ELSE attached_file_master.attached_file_path
+            END AS attached_file_path,
+            product_master.amount,
+            stock_master.stock_count,
+            product_category.category_id,
+            category_master.category_name
+        from
+            product_master
+            INNER JOIN
+                stock_master
+            ON  product_master.product_id = stock_master.product_id
+            LEFT JOIN
+                attached_file_master
+            ON  attached_file_master.attached_file_id = product_master.attached_file_id
+            LEFT JOIN 
+                product_category
+            ON product_category.product_id = product_master.product_id
+            LEFT JOIN
+                category_master
+            ON category_master.category_id = product_category.category_id
+        Where product_master.product_id = #{product_id}
     </select>
 
     <insert id="createAttachedFile" useGeneratedKeys="true" keyProperty="attachedFile.attachedFileId">
@@ -95,8 +142,8 @@
         INSERT INTO
             product_category
         values(
-            #{category.category_id},
             #{product.productId},
+            #{category.category_id},
             now()
         )
     </insert>

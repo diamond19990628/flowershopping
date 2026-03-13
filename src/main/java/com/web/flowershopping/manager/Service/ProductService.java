@@ -9,5 +9,7 @@ import com.web.flowershopping.manager.Entity.Result;
 public interface ProductService {
     Result selectAllProduct(String product_name,Integer status,boolean Low_Stock);
 
+    Result selectProductWithID(Integer product_id);
+
     Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file);
 }

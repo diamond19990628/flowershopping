@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.LoginException;
+import com.web.flowershopping.common.Exception.ReadException;
 import com.web.flowershopping.common.Exception.TokenException;
 import com.web.flowershopping.manager.Entity.Result;
 @RestControllerAdvice
@@ -33,6 +34,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CreateException.class)
     public ResponseEntity<Result> handleException(CreateException e){
+        Result result = new Result();
+        result.setStatus(404);
+        result.setMsg(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    @ExceptionHandler(ReadException.class)
+    public ResponseEntity<Result> handleException(ReadException e){
         Result result = new Result();
         result.setStatus(404);
         result.setMsg(e.getMessage());
