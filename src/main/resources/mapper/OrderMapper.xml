@@ -36,6 +36,7 @@
         <association property="product" javaType="com.web.flowershopping.manager.Entity.Product">
             <id property="productId" column="product_id"/>
             <id property="productName" column="product_name"/>
+            <id property="amount" column="amount"/>
         </association>
         <association property="card" javaType="com.web.flowershopping.manager.Entity.Card">
             <id property="card_id" column="card_id"/>
@@ -48,7 +49,19 @@
             om.order_no,
             UM.user_id,
             UM.nickname,
-            om.total_amount,
+            (
+                select
+                    IFNULL(SUM(product_master.amount * order_item.quantity), 0)
+                from
+                    order_item
+                    INNER JOIN
+                        product_master
+                    ON  order_item.product_id = product_master.product_id
+                where
+                    order_item.order_id = om.order_id
+                group by
+                    order_id
+            ) as total_amount,
             dym.delivery_type_name,
             osm.status_id,
             osm.status_name,
@@ -94,7 +107,8 @@
             cm.card_id,
             cm.card_name,
             oi.comment,
-            oi.is_anonymous
+            oi.is_anonymous,
+            pm.amount
         from
             order_item oi
             INNER JOIN

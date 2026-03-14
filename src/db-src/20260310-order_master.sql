@@ -48,3 +48,5 @@ create table delivery_type_master(
 
 INSERT INTO delivery_type_master values(1,'自取');
 INSERT INTO delivery_type_master values(2,'配送');
+
+select * from order_master where status_id = 1

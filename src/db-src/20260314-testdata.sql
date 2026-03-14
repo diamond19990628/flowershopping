@@ -76,7 +76,8 @@ select
             cm.card_id,
             cm.card_name,
             oi.comment,
-            oi.is_anonymous
+            oi.is_anonymous,
+            pm.amount
         from
             order_item oi
             INNER JOIN
@@ -126,4 +127,44 @@ select
                 delivery_address_master dam
             ON  dam.user_id = UM.user_id
             AND dam.delivery_address_id = om.Delivery_address_id
+
+
+select
+            om.order_id,
+            om.order_no,
+            UM.user_id,
+            UM.nickname,
+            (
+                select IFNULL(SUM(product_master.amount * order_item.quantity),0) from order_item INNER JOIN product_master ON order_item.product_id = product_master.product_id where order_item.order_id = om.order_id group by order_id 
+            ) as total_amount,
+            dym.delivery_type_name,
+            osm.status_id,
+            osm.status_name,
+            dam.delivery_address_id,
+            dam.delivery_address,
+            UM.tel,
+            UM.birthday,
+            om.create_time
+        from
+            order_master om
+            INNER JOIN
+                USER_MASTER UM
+            ON  um.user_id = om.user_id
+            INNER JOIN
+                delivery_type_master dym
+            ON  dym.delivery_type_id = om.delivery_type_id
+            INNER JOIN
+                order_status_master osm
+            ON  osm.status_id = om.status_id
+            INNER JOIN
+                delivery_address_master dam
+            ON  dam.user_id = UM.user_id
+            AND dam.delivery_address_id = om.Delivery_address_id
+
+select IFNULL(SUM(product_master.amount * order_item.quantity),0) from order_item INNER JOIN product_master ON order_item.product_id = product_master.product_id where order_item.order_id = 3
+group by order_id 
+
+select * from order_item INNER JOIN product_master ON order_item.product_id = product_master.product_id
+
+select * from delivery_type_master
 
