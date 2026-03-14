@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.flowershopping.manager.Mapper.OrderMapper">
+    <resultMap id="OrderMap" type="com.web.flowershopping.manager.Entity.Order">
+        <id property="order_id" column="order_id"/>
+        <id property="order_no" column="order_no"/>
+        <id property="total_amount" column="total_amount"/>
+        <id property="create_time" column="create_time"/>
+        <association property="user" javaType="com.web.flowershopping.manager.Entity.User">
+            <id property="user_id" column="user_id"/>
+            <id property="nickName" column="nickname"/>
+            <id property="birthday" column="birthday"/>
+            <id property="tel" column="tel"/>
+        </association>
+        <association property="status" javaType="com.web.flowershopping.manager.Entity.Status">
+            <id property="status_id" column="status_id"/>
+            <id property="status_name" column="status_name"/>
+        </association>
+        <association property="deliverytype" javaType="com.web.flowershopping.manager.Entity.deliveryType">
+            <id property="delivery_type_name" column="delivery_type_name"/>
+        </association>
+        <association property="deliveryAddress" javaType="com.web.flowershopping.manager.Entity.DeliveryAddress">
+            <id property="delivery_address_id" column="delivery_address_id"/>
+            <id property="delivery_address" column="delivery_address"/>
+        </association>
+        <collection property="order_items" ofType="com.web.flowershopping.manager.Entity.OrderItem" column="order_id" select="selectOrderItemByOrderId"/>
+    </resultMap>
+    <!-- 子查询专用 -->
+    <resultMap id="OrderItemMap" type="com.web.flowershopping.manager.Entity.OrderItem">
+        <id property="quantity" column="quantity"/>
+        <id property="comment" column="comment"/>
+        <id property="is_anonymous" column="is_anonymous"/>
+        <association property="product" javaType="com.web.flowershopping.manager.Entity.Product">
+            <id property="productId" column="product_id"/>
+            <id property="productName" column="product_name"/>
+        </association>
+        <association property="card" javaType="com.web.flowershopping.manager.Entity.Card">
+            <id property="card_id" column="card_id"/>
+            <id property="card_name" column="card_name"/>
+        </association>
+    </resultMap>
+    <select id="selectAllOrder" resultMap="OrderMap">
+        select
+            om.order_id,
+            om.order_no,
+            UM.user_id,
+            UM.nickname,
+            om.total_amount,
+            dym.delivery_type_name,
+            osm.status_id,
+            osm.status_name,
+            dam.delivery_address_id,
+            dam.delivery_address,
+            UM.tel,
+            UM.birthday,
+            om.create_time
+        from
+            order_master om
+            INNER JOIN
+                USER_MASTER UM
+            ON  um.user_id = om.user_id
+            INNER JOIN
+                delivery_type_master dym
+            ON  dym.delivery_type_id = om.delivery_type_id
+            INNER JOIN
+                order_status_master osm
+            ON  osm.status_id = om.status_id
+            INNER JOIN
+                delivery_address_master dam
+            ON  dam.user_id = UM.user_id
+            AND dam.delivery_address_id = om.Delivery_address_id
+        <where>
+            <if test="User.nickName != null">
+                AND nickname LIKE CONCAT('%', #{User.nickName}, '%')
+            </if>
+            <if test="Status.status_id != 0">
+                AND om.status_id = #{Status.status_id}
+            </if>
+            <if test="User.tel != null">
+                AND UM.tel = #{User.tel}
+            </if>
+        </where>
+    </select>
+
+    <!-- 子查询 -->
+    <select id="selectOrderItemByOrderId" resultMap="OrderItemMap">
+        select
+            pm.product_id,
+            pm.product_name,
+            oi.quantity,
+            cm.card_id,
+            cm.card_name,
+            oi.comment,
+            oi.is_anonymous
+        from
+            order_item oi
+            INNER JOIN
+                product_master pm
+            ON  pm.product_id = oi.product_id
+            INNER JOIN
+                card_master cm
+            ON  cm.card_id = oi.card_id
+        where
+            oi.order_id = #{order_id}
+    </select>
+</mapper>
