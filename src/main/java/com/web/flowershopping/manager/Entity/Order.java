@@ -14,7 +14,6 @@ public class Order {
     private LocalDateTime create_time;
     private LocalDateTime update_time;
     private List<OrderItem> order_items;
-    private String attachedFilePath;
     public int getOrder_id() {
         return order_id;
     }
@@ -75,18 +74,12 @@ public class Order {
     public void setOrder_items(List<OrderItem> order_items) {
         this.order_items = order_items;
     }
-    public String getAttachedFilePath() {
-        return attachedFilePath;
-    }
-    public void setAttachedFilePath(String attachedFilePath) {
-        this.attachedFilePath = attachedFilePath;
-    }
     @Override
     public String toString() {
         return "Order [order_id=" + order_id + ", order_no=" + order_no + ", user=" + user + ", total_amount="
                 + total_amount + ", status=" + status + ", deliverytype=" + deliverytype + ", deliveryAddress="
                 + deliveryAddress + ", create_time=" + create_time + ", update_time=" + update_time + ", order_items="
-                + order_items + ", attachedFilePath=" + attachedFilePath + ", toString()=" + super.toString() + "]";
+                + order_items + "]";
     }
     
     
