@@ -46,8 +46,7 @@ public class OrderItem {
     @Override
     public String toString() {
         return "OrderItem [product=" + product + ", card=" + card + ", is_anonymous=" + is_anonymous + ", comment="
-                + comment + ", quantity=" + quantity + ", attachedFilePath=" + attachedFilePath + ", toString()="
-                + super.toString() + "]";
+                + comment + ", quantity=" + quantity + ", attachedFilePath=" + attachedFilePath + "]";
     }
     
 }
