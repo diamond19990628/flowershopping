@@ -96,6 +96,10 @@
             <if test="User.tel != null">
                 AND UM.tel = #{User.tel}
             </if>
+            <if test="is_today_order">
+                AND om.create_time &gt;= CURDATE()
+                AND om.create_time &lt; CURDATE() + INTERVAL 1 DAY
+            </if>
         </where>
     </select>
 
@@ -125,4 +129,15 @@
         where
             oi.order_id = #{order_id}
     </select>
+
+    <update id="changeOrderStatus">
+        UPDATE order_master
+        <set>
+            <if test="status_id != 0">
+                status_id = #{status_id},
+            </if>
+            update_time = now()
+        </set>
+        WHERE order_id = #{order_id}
+    </update>
 </mapper>

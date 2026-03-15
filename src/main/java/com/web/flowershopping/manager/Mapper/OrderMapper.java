@@ -14,6 +14,12 @@ public interface OrderMapper {
     public List<Order> selectAllOrder(
         @Param("User") User user,
         @Param("Order") Order order,
-        @Param("Status") Status status
+        @Param("Status") Status status,
+        @Param("is_today_order") boolean isTodayOrder
+    );
+
+    public void changeOrderStatus(
+        @Param("status_id") Integer status_id,
+        @Param("order_id") Integer order_id
     );
 }

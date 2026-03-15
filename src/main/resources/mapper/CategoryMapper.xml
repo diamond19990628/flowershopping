@@ -28,8 +28,4 @@
         WHERE cm1.category_id = #{category_id}
     </select>
 
-    <delete id="deleteCategoryWithID">
-        DELETE FROM 
-    </delete>
-
 </mapper>
