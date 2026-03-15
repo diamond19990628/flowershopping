@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.manager.Entity.Order;
+import com.web.flowershopping.manager.Entity.OrderItem;
 import com.web.flowershopping.manager.Entity.Result;
 import com.web.flowershopping.manager.Entity.Status;
 import com.web.flowershopping.manager.Entity.User;
@@ -40,9 +41,12 @@ public class OrderServiceImp implements OrderService{
         List<Order> orderInfoResult = orderMapper.selectAllOrder(user, order, status);
         for(int i = 0;i<orderInfoResult.size();i++){
             Order currentOrder = orderInfoResult.get(i);
-            // 将图片进行切换
-            String imagePath = getImagePath.changeImagePath(currentOrder.getAttachedFilePath());
-            currentOrder.setAttachedFilePath(imagePath);
+            for(int j = 0;j<currentOrder.getOrder_items().size();j++){
+                OrderItem currentOrderItem = currentOrder.getOrder_items().get(j);
+                // 图片置换
+                String imagePath = getImagePath.changeImagePath(currentOrderItem.getAttachedFilePath());
+                currentOrderItem.setAttachedFilePath(imagePath);
+            }
         }
         Result result = new Result();
         result.setData(orderInfoResult);

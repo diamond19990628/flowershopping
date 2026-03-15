@@ -168,3 +168,25 @@ select * from order_item INNER JOIN product_master ON order_item.product_id = pr
 
 select * from delivery_type_master
 
+select
+            pm.product_id,
+            pm.product_name,
+            oi.quantity,
+            cm.card_id,
+            cm.card_name,
+            oi.comment,
+            oi.is_anonymous,
+            afm.attached_file_path,
+            pm.amount
+        from
+            order_item oi
+            INNER JOIN
+                product_master pm
+            ON  pm.product_id = oi.product_id
+            INNER JOIN
+                card_master cm
+            ON  cm.card_id = oi.card_id
+            INNER JOIN
+                attached_file_master afm
+            ON afm.attached_file_id = pm.attached_file_id
+        WHERE oi.order_id = 4
