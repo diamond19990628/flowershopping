@@ -9,6 +9,7 @@
         <id property="order_no" column="order_no"/>
         <id property="total_amount" column="total_amount"/>
         <id property="create_time" column="create_time"/>
+        <id property="attachedFilePath" column="attachedfilepath"/>
         <association property="user" javaType="com.web.flowershopping.manager.Entity.User">
             <id property="user_id" column="user_id"/>
             <id property="nickName" column="nickname"/>
@@ -62,6 +63,21 @@
                 group by
                     order_id
             ) as total_amount,
+            (
+                select
+                    afm.attached_file_path
+                from
+                    order_item oi
+                    inner join product_master pm
+                        on oi.product_id = pm.product_id
+                    inner join attached_file_master afm
+                        on pm.attached_file_id = afm.attached_file_id
+                where
+                    oi.order_id = om.order_id
+                order by
+                    oi.product_id
+                limit 1
+            ) as attachedfilepath,
             dym.delivery_type_name,
             osm.status_id,
             osm.status_name,

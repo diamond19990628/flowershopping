@@ -1,7 +1,6 @@
 package com.web.flowershopping.manager.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +11,7 @@ import com.web.flowershopping.manager.Entity.User;
 
 @Mapper
 public interface OrderMapper {
-    public List<Map<String,Object>> selectAllOrder(
+    public List<Order> selectAllOrder(
         @Param("User") User user,
         @Param("Order") Order order,
         @Param("Status") Status status

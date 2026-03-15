@@ -1,10 +1,10 @@
 package com.web.flowershopping.manager.Service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.manager.Entity.Order;
 import com.web.flowershopping.manager.Entity.Result;
 import com.web.flowershopping.manager.Entity.Status;
@@ -17,6 +17,8 @@ import jakarta.annotation.Resource;
 public class OrderServiceImp implements OrderService{
     @Resource
     OrderMapper orderMapper;
+    @Resource
+    getImagePath getImagePath;
 
     @Override
     public Result selectAllOrder(String searchString,Integer status_id) {
@@ -35,7 +37,13 @@ public class OrderServiceImp implements OrderService{
         }
         Status status = new Status();
         status.setStatusId(status_id);
-        List<Map<String,Object>> orderInfoResult = orderMapper.selectAllOrder(user, order, status);
+        List<Order> orderInfoResult = orderMapper.selectAllOrder(user, order, status);
+        for(int i = 0;i<orderInfoResult.size();i++){
+            Order currentOrder = orderInfoResult.get(i);
+            // 将图片进行切换
+            String imagePath = getImagePath.changeImagePath(currentOrder.getAttachedFilePath());
+            currentOrder.setAttachedFilePath(imagePath);
+        }
         Result result = new Result();
         result.setData(orderInfoResult);
         result.setStatus(200);
