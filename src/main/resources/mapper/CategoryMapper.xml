@@ -4,19 +4,18 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.web.flowershopping.manager.Mapper.CategoryMapper">
-    <select id="selectAllCategories" resultType="map">
+    <resultMap id="CategoryWithChildMap" type="com.web.flowershopping.manager.Entity.CategoriesAll">
+        <id property="category_id" column="category_id"/>
+        <result property="category_name" column="category_name"/>
+        <collection property="parent_category" ofType="com.web.flowershopping.manager.Entity.Category" column="category_id" select="selectChildCategoriesWithParent"></collection>
+    </resultMap>
+
+    <select id="selectAllCategories">
         select
-            cm1.category_id,
-            cm1.category_name,
-            cm1.child_category_id,
-            CASE WHEN cm2.category_name IS NULL
-            THEN '' ELSE cm2.category_name
-            END AS child_category_name
+            *
         from
             category_master cm1
-            LEFT JOIN
-                category_master cm2
-            ON  cm1.category_id = cm2.child_category_id
+        WHERE cm1.parent_category_id != 0
     </select>
 
     <select id="selectCategoryWithID">
@@ -26,6 +25,27 @@
         from
             category_master cm1
         WHERE cm1.category_id = #{category_id}
+        AND cm1.parent_category_id != 0
+    </select>
+
+    <select id="selectAllParentChildCategories" resultMap="CategoryWithChildMap">
+        SELECT 
+            cm1.category_id, cm1.category_name
+        FROM
+            category_master cm1
+        WHERE
+            cm1.parent_category_id = 0
+    </select>
+    
+    <select id="selectChildCategoriesWithParent" resultType="com.web.flowershopping.manager.Entity.Category">
+        select
+            cm1.category_id,
+            cm1.category_name
+        from
+            category_master cm1
+		LEFT JOIN category_master cm2
+        ON cm1.parent_category_id = cm2.category_id
+		where cm2.category_id = #{category_id}
     </select>
 
 </mapper>

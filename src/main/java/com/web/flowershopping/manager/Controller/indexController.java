@@ -97,10 +97,20 @@ public class indexController {
     // category专属
     @GetMapping("/categories")
     public Result getCategory(HttpServletRequest request) {
-        String token = request.getHeader("token");
-        sessions.auth_session(request, token);
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
         Result result = categoryService.selectAllCategory();
         return result;
     }
+
+    // 获取所有分类（父类和子类）
+    @GetMapping("/categories/all")
+    public Result getAllGategory(HttpServletRequest request) {
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Result result = categoryService.selectAllParentAndChildCategory();
+        return result;
+    }
+    
     
 }

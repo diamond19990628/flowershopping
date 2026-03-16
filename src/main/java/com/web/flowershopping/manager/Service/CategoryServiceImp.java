@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.web.flowershopping.manager.Entity.CategoriesAll;
 import com.web.flowershopping.manager.Entity.Result;
 import com.web.flowershopping.manager.Mapper.CategoryMapper;
 
@@ -19,6 +20,14 @@ public class CategoryServiceImp implements CategoryService{
         List<Map<String,Object>> cateGoryList = categoryMapper.selectAllCategories();
         Result result = new Result();
         result.setData(cateGoryList);
+        result.setStatus(200);
+        return result;
+    }
+    @Override
+    public Result selectAllParentAndChildCategory() {
+        List<CategoriesAll> cateGoriesList = categoryMapper.selectAllParentChildCategories();
+        Result result = new Result();
+        result.setData(cateGoriesList);
         result.setStatus(200);
         return result;
     };

@@ -7,4 +7,6 @@ import com.web.flowershopping.manager.Entity.Result;
 @Service
 public interface CategoryService {
     Result selectAllCategory();
+
+    Result selectAllParentAndChildCategory();
 }
