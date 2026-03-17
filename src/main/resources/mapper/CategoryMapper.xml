@@ -79,4 +79,43 @@
         </trim>
     </insert>
 
+    <select id="selectProductCountWithCategoryID">
+        select
+            count(pc.product_id) AS product_count
+        from
+            category_master cm1
+            LEFT JOIN
+                category_master cm2
+            ON  cm1.category_id = cm2.parent_category_id
+            INNER JOIN
+                product_category pc
+            ON  pc.category_id = cm2.category_id
+        where
+            cm1.category_id = #{category_id}
+    </select>
+
+    <select id="selectChildCategoryIdwithCategoryId">
+        select
+            cm2.category_id
+        from
+            category_master cm1
+            LEFT JOIN
+                category_master cm2
+            ON  cm1.category_id = cm2.parent_category_id
+        where
+            cm1.category_id = #{category_id}
+    </select>
+
+    <delete id="deleteAllChild">
+        DELETE FROM category_master
+        WHERE category_id IN
+        <foreach collection="IdList" item="item" open="(" separator="," close=")">
+            #{item.category_id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteCategoryWithID">
+        DELETE FROM category_master
+        WHERE category_id = #{category_id}
+    </delete>
 </mapper>

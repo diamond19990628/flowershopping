@@ -2,6 +2,8 @@ package com.web.flowershopping.manager.Controller;
 
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -100,8 +102,8 @@ public class indexController {
     // category专属
     @GetMapping("/categories")
     public Result getCategory(HttpServletRequest request) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = categoryService.selectAllCategory();
         return result;
     }
@@ -117,8 +119,9 @@ public class indexController {
 
     // 创建新分类
     @PostMapping("/categories")
-    public Result createNewCategory(@RequestBody Map<String, Object> requestBody) {
-        //TODO: process POST request
+    public Result createNewCategory(HttpServletRequest request,@RequestBody Map<String, Object> requestBody) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         if(!requestBody.containsKey("category_name")){
             throw new CreateException("分类名不能为空");
         }
@@ -127,7 +130,19 @@ public class indexController {
         Result result = categoryService.createNewCategory(parent_category_id, category_name);
         return result;
     }
-    
+    // 删除分类
+    @DeleteMapping("/categories/{category_id}")
+    public ResponseEntity<Void> deleteCategory(HttpServletRequest request,@PathVariable("category_id")Integer category_id){
+        System.out.println(category_id);
+        if(category_id==null){
+            throw new CreateException("参数category_id不能为空");
+        }
+        Result result = categoryService.deleteCategoryWithID(category_id);
+        if(result.getStatus()==204){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
     
     
 }

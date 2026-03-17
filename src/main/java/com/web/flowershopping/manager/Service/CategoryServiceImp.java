@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.web.flowershopping.common.Exception.CreateException;
+import com.web.flowershopping.common.Exception.ParamException;
 import com.web.flowershopping.manager.Entity.CategoriesAll;
+import com.web.flowershopping.manager.Entity.Category;
 import com.web.flowershopping.manager.Entity.Result;
 import com.web.flowershopping.manager.Mapper.CategoryMapper;
 
@@ -56,5 +58,24 @@ public class CategoryServiceImp implements CategoryService{
         }
         return result;
         
+    }
+    @Override
+    @Transactional
+    public Result deleteCategoryWithID(Integer category_id) {
+        // 查询该分类是否存在产品
+        int productCount = categoryMapper.selectProductCountWithCategoryID(category_id);
+        if(productCount > 0){
+            throw new ParamException("该分类存在产品，无法删除");
+        }
+        // 查询该分类是是否存在子分类
+        List<Category> categoryIdList = categoryMapper.selectChildCategoryIdwithCategoryId(category_id);
+        if(categoryIdList.size()>0){
+            // 删除旗下所有子分类
+            categoryMapper.deleteAllChild(categoryIdList);
+        }
+        categoryMapper.deleteCategoryWithID(category_id);
+        Result result = new Result();
+        result.setStatus(204);
+        return result;
     }
 }

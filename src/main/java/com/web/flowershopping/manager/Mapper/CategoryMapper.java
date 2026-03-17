@@ -23,6 +23,23 @@ public interface CategoryMapper {
         Map<String,Object> CategoryParam
     );
 
+    // 根据分类ID查询该分类是否存在产品
+    public int selectProductCountWithCategoryID(
+        @Param("category_id")Integer category_id
+    );
+
+    public int deleteCategoryWithID(
+        @Param("category_id")Integer category_id
+    );
+
+    public List<Category> selectChildCategoryIdwithCategoryId(
+        @Param("category_id")Integer category_id
+    );
+
+    public int deleteAllChild(
+        @Param("IdList") List<Category> IdList
+    );
+
     public CategoriesAll selectAllCategoriesInfoWithID(
         @Param("category_id")Long category_id
     );
