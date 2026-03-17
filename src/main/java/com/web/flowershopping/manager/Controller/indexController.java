@@ -144,6 +144,22 @@ public class indexController {
         }
         return ResponseEntity.badRequest().build();
     }
+    // 修改分类
+    @PostMapping("/categories/{category_id}")
+    public Result updateCategory(HttpServletRequest request,@PathVariable("category_id")Integer category_id,@RequestBody Map<String, Object> requestBody) {
+        //TODO: process POST request
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        if(!requestBody.containsKey("category_name")){
+            throw new CreateException("分类名不能为空");
+        }
+        if(category_id==null){
+            throw new CreateException("参数category_id不能为空");
+        }
+        String category_name = (String) requestBody.get("category_name");
+        Result result = categoryService.updateCategoryWithID(category_id, category_name);
+        return result;
+    }
     
     
 }

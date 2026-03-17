@@ -78,4 +78,26 @@ public class CategoryServiceImp implements CategoryService{
         result.setStatus(204);
         return result;
     }
+    @Override
+    @Transactional
+    public Result updateCategoryWithID(Integer category, String category_name) {
+        // 查询该分类是否存在
+        Category categoryResult = categoryMapper.selectAllCategoryWithID(category);
+        Result result = new Result();
+        if(categoryResult != null){
+            int updateCategoryResult = categoryMapper.updateCategory(category, category_name);
+            // 情報調査
+            if(updateCategoryResult>0){
+                long category_id = (long)category;
+                CategoriesAll categoryNewInfo = categoryMapper.selectAllCategoriesInfoWithID(category_id);
+                result.setStatus(201);
+                result.setData(categoryNewInfo);
+            }else{
+                throw new ParamException("出现错误");
+            }
+        }else{
+            throw new CreateException("该分类已经不存在，无法修改");
+        }
+        return result;
+    }
 }

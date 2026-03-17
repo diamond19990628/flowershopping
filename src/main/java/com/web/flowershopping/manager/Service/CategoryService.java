@@ -10,6 +10,8 @@ public interface CategoryService {
 
     Result selectAllParentAndChildCategory();
 
+    Result updateCategoryWithID(Integer category,String category_name);
+
     Result createNewCategory(Integer parent_category_id, String category_name);
 
     Result deleteCategoryWithID(Integer category_id);

@@ -36,8 +36,17 @@ public interface CategoryMapper {
         @Param("category_id")Integer category_id
     );
 
+    public Category selectAllCategoryWithID(
+        @Param("category_id")Integer category_id
+    );
+
     public int deleteAllChild(
         @Param("IdList") List<Category> IdList
+    );
+
+    public int updateCategory(
+        @Param("category_id")Integer category_id,
+        @Param("category_name")String category_name
     );
 
     public CategoriesAll selectAllCategoriesInfoWithID(

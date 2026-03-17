@@ -10,6 +10,10 @@
         <collection property="parent_category" ofType="com.web.flowershopping.manager.Entity.Category" column="category_id" select="selectChildCategoriesWithParent"></collection>
     </resultMap>
 
+    <select id="selectAllCategoryWithID">
+        select * from category_master where category_id = #{category_id}
+    </select>
+
     <select id="selectAllCategories">
         select
             *
@@ -18,6 +22,7 @@
         WHERE cm1.parent_category_id != 0
     </select>
 
+    <!-- 查询子分类 -->
     <select id="selectCategoryWithID">
         select
             cm1.category_id,
@@ -118,4 +123,15 @@
         DELETE FROM category_master
         WHERE category_id = #{category_id}
     </delete>
+
+    <update id="updateCategory">
+        UPDATE category_master
+        <set>
+            <if test="category_name != null">
+                category_name = #{category_name},
+            </if>
+            update_date = now()
+        </set>
+        WHERE category_id = #{category_id}
+    </update>
 </mapper>
