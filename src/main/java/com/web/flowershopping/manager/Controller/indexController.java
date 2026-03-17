@@ -133,7 +133,8 @@ public class indexController {
     // 删除分类
     @DeleteMapping("/categories/{category_id}")
     public ResponseEntity<Void> deleteCategory(HttpServletRequest request,@PathVariable("category_id")Integer category_id){
-        System.out.println(category_id);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         if(category_id==null){
             throw new CreateException("参数category_id不能为空");
         }

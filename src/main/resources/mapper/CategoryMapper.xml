@@ -91,7 +91,7 @@
                 product_category pc
             ON  pc.category_id = cm2.category_id
         where
-            cm1.category_id = #{category_id}
+            cm2.category_id = #{category_id} OR cm1.category_id = #{category_id}
     </select>
 
     <select id="selectChildCategoryIdwithCategoryId">
