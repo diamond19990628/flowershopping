@@ -9,4 +9,6 @@ public interface CategoryService {
     Result selectAllCategory();
 
     Result selectAllParentAndChildCategory();
+
+    Result createNewCategory(Integer parent_category_id, String category_name);
 }

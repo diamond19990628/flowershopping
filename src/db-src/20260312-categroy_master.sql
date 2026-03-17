@@ -6,9 +6,9 @@ create table product_category(
 );
 
 create table category_master(
-    category_id INT NOT NULL PRIMARY KEY,
+    category_id BIGINT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     category_name VARCHAR(200) NOT NULL,
-    child_category_id INT NOT NULL,
+    parent_category_id INT NOT NULL,
     entry_date DATETIME DEFAULT CURRENT_TIMESTAMP comment '创建时间',
     update_date DATETIME NOT NULL
 );

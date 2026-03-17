@@ -1,5 +1,7 @@
 package com.web.flowershopping.manager.Controller;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.web.flowershopping.common.sessions;
+import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.manager.Entity.Product;
 import com.web.flowershopping.manager.Entity.Result;
 import com.web.flowershopping.manager.Service.CategoryService;
@@ -106,11 +109,25 @@ public class indexController {
     // 获取所有分类（父类和子类）
     @GetMapping("/categories/all")
     public Result getAllGategory(HttpServletRequest request) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = categoryService.selectAllParentAndChildCategory();
         return result;
     }
+
+    // 创建新分类
+    @PostMapping("/categories")
+    public Result createNewCategory(@RequestBody Map<String, Object> requestBody) {
+        //TODO: process POST request
+        if(!requestBody.containsKey("category_name")){
+            throw new CreateException("分类名不能为空");
+        }
+        Integer parent_category_id = (Integer) requestBody.get("parent_category_id") == null ? 0:(Integer) requestBody.get("parent_category_id");
+        String category_name = (String) requestBody.get("category_name");
+        Result result = categoryService.createNewCategory(parent_category_id, category_name);
+        return result;
+    }
+    
     
     
 }

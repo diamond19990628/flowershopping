@@ -18,4 +18,12 @@ public interface CategoryMapper {
     public Category selectCategoryWithID(
         @Param("category_id")Integer category_id
     );
+
+    public int createNewCategory(
+        Map<String,Object> CategoryParam
+    );
+
+    public CategoriesAll selectAllCategoriesInfoWithID(
+        @Param("category_id")Long category_id
+    );
 }
