@@ -16,4 +16,7 @@ public interface ProductService {
     Result updateProduct(Integer product_id,String product_name,Integer amount,Integer stock,Integer category,MultipartFile file);
 
     Result UnlistProduct(Integer product_id,Integer status);
+
+    // 用户界面专用
+    Result selectMemberAllProduct(Integer category_id);
 }

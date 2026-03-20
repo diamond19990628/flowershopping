@@ -29,6 +29,16 @@
             <result property="category_name" column="category_name"/>
         </association>
     </resultMap>
+
+    <resultMap id="productMemberMap" type="com.web.flowershopping.Entity.Product">
+        <id property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="amount" column="amount"/>
+        <association property="attachedFile" javaType="com.web.flowershopping.Entity.AttachedFIlePhoto">
+            <result property="attachedFileId" column="attached_file_id"/>
+            <result property="attachedFilePath" column="attached_file_path"/>
+        </association>
+    </resultMap>
     <select id="selectAllProduct" resultMap="productMap">
         select
             product_master.product_id,
@@ -105,6 +115,41 @@
                 category_master
             ON category_master.category_id = product_category.category_id
         Where product_master.product_id = #{product_id}
+    </select>
+
+    <!-- 用户界面根据分类ID查询商品 -->
+    <select id="selectProductWithCategoryID" resultMap="productMemberMap">
+        select
+            product_master.product_id,
+            product_master.product_name,
+            CASE
+                WHEN attached_file_master.attached_file_id IS NULL THEN 0
+                ELSE attached_file_master.attached_file_id
+            END AS attached_file_id,
+            CASE
+                WHEN attached_file_master.attached_file_path IS NULL THEN ""
+                ELSE attached_file_master.attached_file_path
+            END AS attached_file_path,
+            product_master.amount
+        from
+            product_master
+            INNER JOIN
+                stock_master
+            ON  product_master.product_id = stock_master.product_id
+            LEFT JOIN
+                attached_file_master
+            ON  attached_file_master.attached_file_id = product_master.attached_file_id
+            LEFT JOIN 
+                product_category
+            ON product_category.product_id = product_master.product_id
+            LEFT JOIN
+                category_master
+            ON category_master.category_id = product_category.category_id
+	WHERE stock_master.stock_count &gt; 0
+    AND product_master.status = 1
+    <if test="category_id != null">
+        AND category_master.parent_category_id = #{category_id}
+    </if>
     </select>
 
     <insert id="createAttachedFile" useGeneratedKeys="true" keyProperty="attachedFile.attachedFileId">

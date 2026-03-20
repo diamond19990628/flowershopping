@@ -240,4 +240,17 @@ public class ProductServiceImp implements ProductService{
         result.setData(resultData);
         return result;
     }
+
+    @Override
+    public Result selectMemberAllProduct(Integer category_id) {
+        List<Product> products = productmapper.selectProductWithCategoryID(category_id);
+        for(Product product : products){
+            String imagePath = getimagePath.changeImagePath(product.getAttachedFile().getAttachedFilePath());
+            product.getAttachedFile().setAttachedFilePath(imagePath);
+        }
+        Result result = new Result();
+        result.setData(products);
+        result.setStatus(200);
+        return result;
+    }
 }

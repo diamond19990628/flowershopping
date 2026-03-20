@@ -16,6 +16,10 @@ public interface ProductMapper {
         @Param("Low_Stock") boolean Low_Stock
     );
 
+    List<Product> selectProductWithCategoryID(
+        @Param("category_id") Integer category_id
+    );
+
     Product selectProductWithID(@Param("product_id")Integer product_id);
 
     int createAttachedFile(
