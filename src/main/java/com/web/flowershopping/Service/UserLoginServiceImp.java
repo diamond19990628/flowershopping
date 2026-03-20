@@ -1,10 +1,10 @@
-package com.web.flowershopping.manager.Service;
+package com.web.flowershopping.Service;
 
 import org.springframework.stereotype.Service;
 
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Entity.User;
-import com.web.flowershopping.manager.Mapper.UserLoginMapper;
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Entity.User;
+import com.web.flowershopping.Mapper.UserLoginMapper;
 
 import jakarta.annotation.Resource;
 

@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Entity;
+package com.web.flowershopping.Entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

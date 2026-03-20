@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Service;
+package com.web.flowershopping.Service;
 
 import java.util.List;
 
@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.web.flowershopping.Entity.Order;
+import com.web.flowershopping.Entity.OrderItem;
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Entity.Status;
+import com.web.flowershopping.Entity.User;
+import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.common.getImagePath;
-import com.web.flowershopping.manager.Entity.Order;
-import com.web.flowershopping.manager.Entity.OrderItem;
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Entity.Status;
-import com.web.flowershopping.manager.Entity.User;
-import com.web.flowershopping.manager.Mapper.OrderMapper;
 
 import jakarta.annotation.Resource;
 

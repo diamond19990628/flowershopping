@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.web.flowershopping.manager.Mapper.ProductMapper">
-    <resultMap id="productMap" type="com.web.flowershopping.manager.Entity.Product">
+<mapper namespace="com.web.flowershopping.Mapper.ProductMapper">
+    <resultMap id="productMap" type="com.web.flowershopping.Entity.Product">
 
         <id property="productId" column="product_id"/>
     
@@ -17,13 +17,13 @@
         <result property="status" column="status"/>
     
         <association property="attachedFile"
-            javaType="com.web.flowershopping.manager.Entity.AttachedFIlePhoto">
+            javaType="com.web.flowershopping.Entity.AttachedFIlePhoto">
             <result property="attachedFileId" column="attached_file_id"/>
             <result property="attachedFilePath" column="attached_file_path"/>
     
         </association>
         <association property="category" 
-            javaType="com.web.flowershopping.manager.Entity.Category">
+            javaType="com.web.flowershopping.Entity.Category">
             <result property="category_id" column="category_id"/>
 
             <result property="category_name" column="category_name"/>

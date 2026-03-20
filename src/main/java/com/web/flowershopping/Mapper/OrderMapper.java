@@ -1,13 +1,13 @@
-package com.web.flowershopping.manager.Mapper;
+package com.web.flowershopping.Mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.web.flowershopping.manager.Entity.Order;
-import com.web.flowershopping.manager.Entity.Status;
-import com.web.flowershopping.manager.Entity.User;
+import com.web.flowershopping.Entity.Order;
+import com.web.flowershopping.Entity.Status;
+import com.web.flowershopping.Entity.User;
 
 @Mapper
 public interface OrderMapper {

@@ -1,8 +1,8 @@
-package com.web.flowershopping.manager.Mapper;
+package com.web.flowershopping.Mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.web.flowershopping.manager.Entity.User;
+import com.web.flowershopping.Entity.User;
 
 @Mapper
 public interface UserLoginMapper {

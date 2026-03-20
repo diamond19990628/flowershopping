@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Service.OrderService;
 import com.web.flowershopping.common.sessions;
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Service.OrderService;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;

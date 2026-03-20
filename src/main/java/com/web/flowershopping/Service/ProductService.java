@@ -1,9 +1,9 @@
-package com.web.flowershopping.manager.Service;
+package com.web.flowershopping.Service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.web.flowershopping.manager.Entity.Result;
+import com.web.flowershopping.Entity.Result;
 
 @Service
 public interface ProductService {

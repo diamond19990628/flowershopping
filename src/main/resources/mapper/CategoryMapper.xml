@@ -3,11 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.web.flowershopping.manager.Mapper.CategoryMapper">
-    <resultMap id="CategoryWithChildMap" type="com.web.flowershopping.manager.Entity.CategoriesAll">
+<mapper namespace="com.web.flowershopping.Mapper.CategoryMapper">
+    <resultMap id="CategoryWithChildMap" type="com.web.flowershopping.Entity.CategoriesAll">
         <id property="category_id" column="category_id"/>
         <result property="category_name" column="category_name"/>
-        <collection property="parent_category" ofType="com.web.flowershopping.manager.Entity.Category" column="category_id" select="selectChildCategoriesWithParent"></collection>
+        <collection property="parent_category" ofType="com.web.flowershopping.Entity.Category" column="category_id" select="selectChildCategoriesWithParent"></collection>
     </resultMap>
 
     <select id="selectAllCategoryWithID">
@@ -51,7 +51,7 @@
             cm1.category_id = #{category_id}
     </select>
     
-    <select id="selectChildCategoriesWithParent" resultType="com.web.flowershopping.manager.Entity.Category">
+    <select id="selectChildCategoriesWithParent" resultType="com.web.flowershopping.Entity.Category">
         select
             cm1.category_id,
             cm1.category_name

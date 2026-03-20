@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Service;
+package com.web.flowershopping.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.web.flowershopping.Entity.AttachedFIlePhoto;
+import com.web.flowershopping.Entity.Category;
+import com.web.flowershopping.Entity.Product;
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Mapper.CategoryMapper;
+import com.web.flowershopping.Mapper.ProductMapper;
 import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.ReadException;
-import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
-import com.web.flowershopping.manager.Entity.Category;
-import com.web.flowershopping.manager.Entity.Product;
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Mapper.CategoryMapper;
-import com.web.flowershopping.manager.Mapper.ProductMapper;
 
 import jakarta.annotation.Resource;
 
@@ -113,7 +113,7 @@ public class ProductServiceImp implements ProductService{
         createProductCategoryDTO.setStock(stock);
         productmapper.createStock(createProductCategoryDTO);
         // category
-        Category categoryDTO = new com.web.flowershopping.manager.Entity.Category();
+        Category categoryDTO = new com.web.flowershopping.Entity.Category();
         Category categoryResult = productmapper.selectCategory(category);
         if(categoryResult == null){
             throw new CreateException("category不存在");

@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Mapper;
+package com.web.flowershopping.Mapper;
 
 import java.util.List;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.web.flowershopping.manager.Entity.CategoriesAll;
-import com.web.flowershopping.manager.Entity.Category;
+import com.web.flowershopping.Entity.CategoriesAll;
+import com.web.flowershopping.Entity.Category;
 
 @Mapper
 public interface CategoryMapper {

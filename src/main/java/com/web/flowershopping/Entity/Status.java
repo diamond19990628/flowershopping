@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Entity;
+package com.web.flowershopping.Entity;
 
 public class Status {
     private int status_id;

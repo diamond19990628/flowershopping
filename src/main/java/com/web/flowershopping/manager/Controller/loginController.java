@@ -5,10 +5,10 @@ import java.util.UUID;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Entity.User;
+import com.web.flowershopping.Service.UserLoginService;
 import com.web.flowershopping.common.getWeChatOpenId;
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Entity.User;
-import com.web.flowershopping.manager.Service.UserLoginService;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;

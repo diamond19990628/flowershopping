@@ -1,13 +1,13 @@
-package com.web.flowershopping.manager.Mapper;
+package com.web.flowershopping.Mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.web.flowershopping.manager.Entity.AttachedFIlePhoto;
-import com.web.flowershopping.manager.Entity.Category;
-import com.web.flowershopping.manager.Entity.Product;
+import com.web.flowershopping.Entity.AttachedFIlePhoto;
+import com.web.flowershopping.Entity.Category;
+import com.web.flowershopping.Entity.Product;
 
 @Mapper
 public interface ProductMapper {

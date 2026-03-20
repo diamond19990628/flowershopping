@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Entity;
+package com.web.flowershopping.Entity;
 
 public class deliveryType {
     private Integer delivery_type_id;

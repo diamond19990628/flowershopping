@@ -3,43 +3,43 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.web.flowershopping.manager.Mapper.OrderMapper">
-    <resultMap id="OrderMap" type="com.web.flowershopping.manager.Entity.Order">
+<mapper namespace="com.web.flowershopping.Mapper.OrderMapper">
+    <resultMap id="OrderMap" type="com.web.flowershopping.Entity.Order">
         <id property="order_id" column="order_id"/>
         <id property="order_no" column="order_no"/>
         <id property="total_amount" column="total_amount"/>
         <id property="create_time" column="create_time"/>
-        <association property="user" javaType="com.web.flowershopping.manager.Entity.User">
+        <association property="user" javaType="com.web.flowershopping.Entity.User">
             <id property="user_id" column="user_id"/>
             <id property="nickName" column="nickname"/>
             <id property="birthday" column="birthday"/>
             <id property="tel" column="tel"/>
         </association>
-        <association property="status" javaType="com.web.flowershopping.manager.Entity.Status">
+        <association property="status" javaType="com.web.flowershopping.Entity.Status">
             <id property="status_id" column="status_id"/>
             <id property="status_name" column="status_name"/>
         </association>
-        <association property="deliverytype" javaType="com.web.flowershopping.manager.Entity.deliveryType">
+        <association property="deliverytype" javaType="com.web.flowershopping.Entity.deliveryType">
             <id property="delivery_type_name" column="delivery_type_name"/>
         </association>
-        <association property="deliveryAddress" javaType="com.web.flowershopping.manager.Entity.DeliveryAddress">
+        <association property="deliveryAddress" javaType="com.web.flowershopping.Entity.DeliveryAddress">
             <id property="delivery_address_id" column="delivery_address_id"/>
             <id property="delivery_address" column="delivery_address"/>
         </association>
-        <collection property="order_items" ofType="com.web.flowershopping.manager.Entity.OrderItem" column="order_id" select="selectOrderItemByOrderId"/>
+        <collection property="order_items" ofType="com.web.flowershopping.Entity.OrderItem" column="order_id" select="selectOrderItemByOrderId"/>
     </resultMap>
     <!-- 子查询专用 -->
-    <resultMap id="OrderItemMap" type="com.web.flowershopping.manager.Entity.OrderItem">
+    <resultMap id="OrderItemMap" type="com.web.flowershopping.Entity.OrderItem">
         <id property="quantity" column="quantity"/>
         <id property="comment" column="comment"/>
         <id property="is_anonymous" column="is_anonymous"/>
         <id property="attachedFilePath" column="attached_file_path"/>
-        <association property="product" javaType="com.web.flowershopping.manager.Entity.Product">
+        <association property="product" javaType="com.web.flowershopping.Entity.Product">
             <id property="productId" column="product_id"/>
             <id property="productName" column="product_name"/>
             <id property="amount" column="amount"/>
         </association>
-        <association property="card" javaType="com.web.flowershopping.manager.Entity.Card">
+        <association property="card" javaType="com.web.flowershopping.Entity.Card">
             <id property="card_id" column="card_id"/>
             <id property="card_name" column="card_name"/>
         </association>

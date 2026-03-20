@@ -5,12 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.LoginException;
 import com.web.flowershopping.common.Exception.ParamException;
 import com.web.flowershopping.common.Exception.ReadException;
 import com.web.flowershopping.common.Exception.TokenException;
-import com.web.flowershopping.manager.Entity.Result;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(LoginException.class)

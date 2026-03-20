@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.web.flowershopping.manager.Mapper")
+@MapperScan("com.web.flowershopping.Mapper")
 public class FlowershoppingApplication {
 
 	public static void main(String[] args) {

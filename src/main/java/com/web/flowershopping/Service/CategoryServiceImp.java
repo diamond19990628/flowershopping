@@ -1,4 +1,4 @@
-package com.web.flowershopping.manager.Service;
+package com.web.flowershopping.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +7,12 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.web.flowershopping.Entity.CategoriesAll;
+import com.web.flowershopping.Entity.Category;
+import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Mapper.CategoryMapper;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.ParamException;
-import com.web.flowershopping.manager.Entity.CategoriesAll;
-import com.web.flowershopping.manager.Entity.Category;
-import com.web.flowershopping.manager.Entity.Result;
-import com.web.flowershopping.manager.Mapper.CategoryMapper;
 
 import jakarta.annotation.Resource;
 @Service
