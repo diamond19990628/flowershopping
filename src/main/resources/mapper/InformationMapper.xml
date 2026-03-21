@@ -13,8 +13,20 @@
         <result property="createdDate" column="created_date"/>
     </resultMap>
 
+    <resultMap id="informationMemberMap" type="com.web.flowershopping.Entity.information">
+        <result property="informationTitle" column="information_title"/>
+        <result property="informationContent" column="information_content"/>
+        <result property="publishStartDate" column="publish_start_date"/>
+        <result property="publishEndDate" column="publish_end_date"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
     <select id="selectAllInformation" resultMap="informationMap">
         select information_id, information_title, information_content, publish_start_date, publish_end_date, created_date from information_master
+    </select>
+
+    <select id="selectCurrentInformation" resultMap="informationMemberMap">
+        select information_title, information_content, publish_start_date, publish_end_date, created_date from information_master where now() between publish_start_date and publish_end_date
     </select>
 
     <select id="selectInformationWithID" resultMap="informationMap">

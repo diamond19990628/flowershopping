@@ -55,6 +55,7 @@ public class informationServiceImp implements informationService {
         result.setData(informationNewInfo);
         return result;
     }
+    @Transactional
     @Override
     public Result deleteInformation(Integer information_id) {
         information information = informationMapper.selectInformationWithID(information_id);
@@ -67,6 +68,14 @@ public class informationServiceImp implements informationService {
         }else{
             throw new DeleteException("信息不存在");
         }
+    }
+    @Override
+    public Result selectMemberInformations() {
+        List<information> informations = informationMapper.selectCurrentInformation();
+        Result result = new Result();
+        result.setData(informations);
+        result.setStatus(200);
+        return result;
     }
 
 }

@@ -9,6 +9,8 @@ import com.web.flowershopping.Entity.information;
 public interface InformationMapper {
     public List<information> selectAllInformation();
 
+    public List<information> selectCurrentInformation();
+
     public int createInformation(
         @Param("information") information information
     );

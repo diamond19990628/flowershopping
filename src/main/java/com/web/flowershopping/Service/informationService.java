@@ -9,6 +9,8 @@ import com.web.flowershopping.Entity.Result;
 public interface informationService {
     public Result selectAllInformation();
 
+    public Result selectMemberInformations();
+
     public Result createInformation(String information_title,String information_content,LocalDateTime publish_start_date,LocalDateTime publish_end_date);
 
     public Result deleteInformation(Integer information_id);
