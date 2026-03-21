@@ -5,16 +5,29 @@
 
 <mapper namespace="com.web.flowershopping.Mapper.InformationMapper">
     <resultMap id="informationMap" type="com.web.flowershopping.Entity.information">
-        <id property="information_id" column="information_id"/>
-        <result property="information_title" column="information_title"/>
-        <result property="information_content" column="information_content"/>
-        <result property="publish_start_date" column="publish_start_date"/>
-        <result property="publish_end_date" column="publish_end_date"/>
-        <result property="created_date" column="created_date"/>
+        <id property="informationId" column="information_id"/>
+        <result property="informationTitle" column="information_title"/>
+        <result property="informationContent" column="information_content"/>
+        <result property="publishStartDate" column="publish_start_date"/>
+        <result property="publishEndDate" column="publish_end_date"/>
+        <result property="createdDate" column="created_date"/>
     </resultMap>
 
     <select id="selectAllInformation" resultMap="informationMap">
         select information_id, information_title, information_content, publish_start_date, publish_end_date, created_date from information_master
     </select>
+
+    <insert id="createInformation" parameterType="com.web.flowershopping.Entity.information" useGeneratedKeys="true" keyProperty="informationId">
+        insert into information_master 
+        (
+            information_title, 
+            information_content, 
+            publish_start_date, 
+            publish_end_date, 
+            created_date,
+            update_date
+        )
+        values (#{information.informationTitle}, #{information.informationContent}, #{information.publishStartDate}, #{information.publishEndDate}, now(), now())
+    </insert>
 
 </mapper>

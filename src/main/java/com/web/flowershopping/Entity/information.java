@@ -1,5 +1,7 @@
 package com.web.flowershopping.Entity;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -7,67 +9,52 @@ public class information {
     private Integer informationId;
     private String informationTitle;
     private String informationContent;
-    private String publishStartDate;
-    private String publishEndDate;
-    private String createdDate;
-    private String updateDate;
-
+    private LocalDateTime publishStartDate;
+    private LocalDateTime publishEndDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updateDate;
     public Integer getInformationId() {
         return informationId;
     }
-
     public void setInformationId(Integer informationId) {
         this.informationId = informationId;
     }
-
     public String getInformationTitle() {
         return informationTitle;
     }
-
     public void setInformationTitle(String informationTitle) {
         this.informationTitle = informationTitle;
     }
-
     public String getInformationContent() {
         return informationContent;
     }
-
     public void setInformationContent(String informationContent) {
         this.informationContent = informationContent;
     }
-
-    public String getPublishStartDate() {
+    public LocalDateTime getPublishStartDate() {
         return publishStartDate;
     }
-
-    public void setPublishStartDate(String publishStartDate) {
+    public void setPublishStartDate(LocalDateTime publishStartDate) {
         this.publishStartDate = publishStartDate;
     }
-
-    public String getPublishEndDate() {
+    public LocalDateTime getPublishEndDate() {
         return publishEndDate;
     }
-
-    public void setPublishEndDate(String publishEndDate) {
+    public void setPublishEndDate(LocalDateTime publishEndDate) {
         this.publishEndDate = publishEndDate;
     }
-
-    public String getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
-
-    public String getUpdateDate() {
+    public LocalDateTime getUpdateDate() {
         return updateDate;
     }
-
-    public void setUpdateDate(String updateDate) {
+    public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
-
     @Override
     public String toString() {
         return "information [informationId=" + informationId + ", informationTitle=" + informationTitle
@@ -75,5 +62,6 @@ public class information {
                 + ", publishEndDate=" + publishEndDate + ", createdDate=" + createdDate + ", updateDate=" + updateDate
                 + "]";
     }
+    
     
 }
