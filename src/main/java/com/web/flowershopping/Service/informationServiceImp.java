@@ -10,6 +10,7 @@ import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.information;
 import com.web.flowershopping.Mapper.InformationMapper;
 import com.web.flowershopping.common.Exception.CreateException;
+import com.web.flowershopping.common.Exception.DeleteException;
 
 import jakarta.annotation.Resource;
 @Service
@@ -53,6 +54,19 @@ public class informationServiceImp implements informationService {
         result.setStatus(200);
         result.setData(informationNewInfo);
         return result;
+    }
+    @Override
+    public Result deleteInformation(Integer information_id) {
+        information information = informationMapper.selectInformationWithID(information_id);
+        if(information != null){
+            informationMapper.deleteInformationWithID(information_id);
+            Result result = new Result();
+            result.setStatus(204);
+            result.setMsg("删除成功");
+            return result;
+        }else{
+            throw new DeleteException("信息不存在");
+        }
     }
 
 }

@@ -17,6 +17,14 @@
         select information_id, information_title, information_content, publish_start_date, publish_end_date, created_date from information_master
     </select>
 
+    <select id="selectInformationWithID" resultMap="informationMap">
+        select information_id, information_title, information_content, publish_start_date, publish_end_date, created_date from information_master where information_id = #{information_id}
+    </select>
+
+    <delete id="deleteInformationWithID">
+        delete from information_master where information_id = #{information_id}
+    </delete>
+
     <insert id="createInformation" parameterType="com.web.flowershopping.Entity.information" useGeneratedKeys="true" keyProperty="informationId">
         insert into information_master 
         (

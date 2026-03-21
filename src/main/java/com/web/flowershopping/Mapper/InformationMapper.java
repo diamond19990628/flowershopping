@@ -12,4 +12,12 @@ public interface InformationMapper {
     public int createInformation(
         @Param("information") information information
     );
+
+    public information selectInformationWithID(
+        @Param("information_id")Integer information_id
+    );
+
+    public int deleteInformationWithID(
+        @Param("information_id")Integer information_id
+    );
 }
