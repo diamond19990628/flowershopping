@@ -9,6 +9,7 @@ import com.web.flowershopping.Service.CategoryService;
 import jakarta.annotation.Resource;
 
 
+
 @RestController
 public class categories {
     @Resource
@@ -19,5 +20,12 @@ public class categories {
         Result result = categoryService.selectAllParentAndChildCategory();
         return result;
     }
+
+    @GetMapping("/member/categories/parentall")
+    public Result getAllParentCategories() {
+        Result result = categoryService.selectAllParentAndChildCategory();
+        return result;
+    }
+    
     
 }

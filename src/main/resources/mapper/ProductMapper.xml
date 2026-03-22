@@ -147,8 +147,11 @@
             ON category_master.category_id = product_category.category_id
 	WHERE stock_master.stock_count &gt; 0
     AND product_master.status = 1
-    <if test="category_id != null">
+    <if test="category_id != null and access_flag == 1">
         AND category_master.parent_category_id = #{category_id}
+    </if>
+    <if test="category_id != null and access_flag == 2">
+        AND category_master.category_id = #{category_id}
     </if>
     </select>
 

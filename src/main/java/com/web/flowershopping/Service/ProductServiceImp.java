@@ -242,8 +242,8 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Override
-    public Result selectMemberAllProduct(Integer category_id) {
-        List<Product> products = productmapper.selectProductWithCategoryID(category_id);
+    public Result selectMemberAllProduct(Integer category_id,int access_flag) {
+        List<Product> products = productmapper.selectProductWithCategoryID(category_id,access_flag);
         for(Product product : products){
             String imagePath = getimagePath.changeImagePath(product.getAttachedFile().getAttachedFilePath());
             product.getAttachedFile().setAttachedFilePath(imagePath);

@@ -17,11 +17,14 @@ public class product {
     ProductService productService;
 
     @GetMapping("/member/product")
-    public Result getMethodName(@RequestParam(required = false) Integer category_id) {
+    public Result getMethodName(@RequestParam(required = false) Integer category_id,@RequestParam(required = false,defaultValue = "1") Integer access_flag) {
         if(category_id == null) {
             throw new ParamException("分类ID不能为空");
         }
-        Result result = productService.selectMemberAllProduct(category_id);
+        if(access_flag == null) {
+            throw new ParamException("访问标志不能为空");
+        }
+        Result result = productService.selectMemberAllProduct(category_id, access_flag);
         return result;
     }
     

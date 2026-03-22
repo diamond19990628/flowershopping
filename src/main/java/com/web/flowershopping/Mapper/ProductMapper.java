@@ -17,7 +17,8 @@ public interface ProductMapper {
     );
 
     List<Product> selectProductWithCategoryID(
-        @Param("category_id") Integer category_id
+        @Param("category_id") Integer category_id,
+        @Param("access_flag") int access_flag
     );
 
     Product selectProductWithID(@Param("product_id")Integer product_id);
