@@ -4,8 +4,15 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.web.flowershopping.Mapper.UserLoginMapper">
+    <resultMap id="UserMap" type="com.web.flowershopping.Entity.User">
+        <id property="user_id" column="user_id"/>
+        <result property="openid" column="openid"/>
+        <result property="nickName" column="nickname"/>
+        <result property="isAdmin" column="is_admin"/>
+        <result property="tel" column="tel"/>
+    </resultMap>
 
-    <select id="selectByOpenId" parameterType="com.web.flowershopping.Entity.User" resultType="com.web.flowershopping.Entity.User">
+    <select id="selectByOpenId" parameterType="com.web.flowershopping.Entity.User" resultMap="UserMap">
         select * from `USER_MASTER` where openid = #{openid}
     </select>
 
