@@ -6,15 +6,19 @@
 <mapper namespace="com.web.flowershopping.Mapper.UserLoginMapper">
 
     <select id="selectByOpenId" parameterType="com.web.flowershopping.Entity.User" resultType="com.web.flowershopping.Entity.User">
-        select * from `USER_MASTER` where openid = #{openid} AND is_admin = 1
+        select * from `USER_MASTER` where openid = #{openid}
+    </select>
+
+    <select id="selectByPhoneNumber" resultType="com.web.flowershopping.Entity.User">
+        select * from `USER_MASTER` where tel = #{phoneNumber}
     </select>
 
     <!-- 插入用户 -->
     <insert id="insertUser"
             parameterType="com.web.flowershopping.Entity.User">
 
-        insert into USER_MASTER(openid, nickname, is_admin)
-        values (#{openid}, #{nickName}, 1)
+        insert into USER_MASTER(openid, nickname, is_admin, tel)
+        values (#{openid}, #{nickName}, 0, #{tel})
 
     </insert>
 

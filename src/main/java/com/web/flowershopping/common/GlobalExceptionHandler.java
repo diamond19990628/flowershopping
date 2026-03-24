@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.web.flowershopping.Entity.Result;
@@ -67,6 +68,17 @@ public class GlobalExceptionHandler {
         Result result = new Result();
         result.setStatus(400);
         result.setMsg("参数必须为数字");
+        return result;
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public Result handleHttpError(HttpClientErrorException e) {
+        Result result = new Result();
+        result.setStatus(e.getStatusCode().value());
+        result.setMsg("第三方接口错误: " + e.getStatusCode());
+
+        System.out.println("返回体: " + e.getResponseBodyAsString());
+
         return result;
     }
 

@@ -8,4 +8,6 @@ import com.web.flowershopping.Entity.User;
 @Service
 public interface UserLoginService {
     Result selectByOpenId(User user);
+
+    Result selectByPhoneNumber(String code);
 }
