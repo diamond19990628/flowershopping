@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.flowershopping.Mapper.ShoppingCartMapper">
+    <resultMap id="cartItemMap" type="com.web.flowershopping.Entity.shoppingCart">
+        <result property="is_anonymous" column="is_anonymous"/>
+        <result property="quantity" column="quantity"/>
+        <result property="attachedFilePath" column="attached_file_path"/>
+        <result property="comment" column="comment"/>
+        <association property="product" javaType="com.web.flowershopping.Entity.Product">
+            <result property="productId" column="product_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="amount" column="amount"/>
+        </association>
+        <association property="card" javaType="com.web.flowershopping.Entity.Card">
+            <result property="card_id" column="card_id"/>
+            <result property="card_name" column="card_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCartItemsByUserId" parameterType="int" resultMap="cartItemMap">
+            select
+                pm.product_id,
+                pm.product_name,
+                afm.attached_file_path,
+                cm.card_id,
+                cm.card_name,
+                sc.comment,
+                sc.is_anonymous,
+                sc.quantity,
+                pm.amount
+            from
+                shopping_cart sc
+                INNER JOIN
+                    product_master pm
+                ON  pm.product_id = sc.product_id
+                INNER JOIN
+                    card_master cm
+                ON  cm.card_id = sc.card_id
+                INNER JOIN
+                    attached_file_master afm
+                ON  afm.attached_file_id = pm.attached_file_id
+            where
+                sc.user_id = #{userId}
+    </select>
+
+</mapper>
