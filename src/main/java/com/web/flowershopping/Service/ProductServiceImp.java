@@ -253,4 +253,13 @@ public class ProductServiceImp implements ProductService{
         result.setStatus(200);
         return result;
     }
+
+    @Override
+    public Result selectAllCard() {
+        List<com.web.flowershopping.Entity.Card> cards = productmapper.selectAllCard();
+        Result result = new Result();
+        result.setData(cards);
+        result.setStatus(200);
+        return result;
+    }
 }

@@ -32,9 +32,10 @@ public class shoppingCart {
     @PostMapping("/member/shoppingCart")
     public Result createNewShoppingCart(HttpServletRequest request,@RequestBody Map<String, Object> Requestdata) {
         //TODO: process POST request
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
-        Result result = shoppingCartService.addCartItem(Integer.valueOf(Requestdata.get("product_id").toString()), Integer.valueOf(Requestdata.get("card_id").toString()), Integer.valueOf(Requestdata.get("user_id").toString()), Integer.valueOf(Requestdata.get("quantity").toString()), (String) Requestdata.get("comment"), Integer.valueOf(Requestdata.get("is_anonymous").toString()));
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Integer is_anonymous = (Integer) Requestdata.get("is_anonymous");
+        Result result = shoppingCartService.addCartItem(Integer.valueOf(Requestdata.get("product_id").toString()), Integer.valueOf(Requestdata.get("card_id").toString()), Integer.valueOf(Requestdata.get("user_id").toString()), Integer.valueOf(Requestdata.get("quantity").toString()), (String) Requestdata.get("comment"), is_anonymous);
         return result;
     }
     

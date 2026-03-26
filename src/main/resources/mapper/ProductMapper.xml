@@ -257,4 +257,14 @@
     <select id="checkStock" resultType="int">
         SELECT IFNULL(stock_count, 0) FROM stock_master WHERE product_id = #{product_id}
     </select>
+
+    <resultMap id="cardMap" type="com.web.flowershopping.Entity.Card">
+        <id property="card_id" column="card_id"/>
+        <result property="card_name" column="card_name"/>
+        <!-- Add other properties as needed -->
+    </resultMap>
+
+    <select id="selectAllCard" resultMap="cardMap">
+        SELECT * FROM card_master
+    </select>
 </mapper>

@@ -9,6 +9,7 @@ import com.web.flowershopping.Service.ProductService;
 import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -27,5 +28,12 @@ public class product {
         Result result = productService.selectMemberAllProduct(category_id, access_flag);
         return result;
     }
-    
+
+    @GetMapping("/member/card")
+    public Result getMethodName(HttpServletRequest request) {
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Result result = productService.selectAllCard();
+        return result;
+    }
 }

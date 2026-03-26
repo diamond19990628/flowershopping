@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.web.flowershopping.Entity.AttachedFIlePhoto;
+import com.web.flowershopping.Entity.Card;
 import com.web.flowershopping.Entity.Category;
 import com.web.flowershopping.Entity.Product;
 
@@ -57,4 +58,7 @@ public interface ProductMapper {
 
     // 查询是否有库存
     Integer checkStock(@Param("product_id") int product_id);
+
+    // 查询所有卡片
+    List<Card> selectAllCard();
 }

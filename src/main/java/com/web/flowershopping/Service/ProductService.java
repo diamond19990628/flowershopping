@@ -19,4 +19,6 @@ public interface ProductService {
 
     // 用户界面专用
     Result selectMemberAllProduct(Integer category_id,int access_flag);
+
+    Result selectAllCard();
 }
