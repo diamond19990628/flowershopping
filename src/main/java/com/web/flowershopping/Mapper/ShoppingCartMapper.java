@@ -10,4 +10,15 @@ import com.web.flowershopping.Entity.shoppingCart;
 @Mapper
 public interface ShoppingCartMapper {
     public List<shoppingCart> selectCartItemsByUserId(@Param("userId") int userId);
+
+    public int selectCartItemCount(@Param("product_id") int product_id, @Param("user_id") int user_id);
+
+    public void updateCartItemQuantity(
+        @Param("product_id") int product_id,
+        @Param("user_id") int user_id
+    );
+
+    public int addCartItem(
+        @Param("cartItem") shoppingCart cartItem
+    );
 }

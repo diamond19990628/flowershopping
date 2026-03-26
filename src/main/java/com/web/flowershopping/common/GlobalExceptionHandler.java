@@ -8,6 +8,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.common.Exception.BusinessException;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.DeleteException;
 import com.web.flowershopping.common.Exception.LoginException;
@@ -89,5 +90,13 @@ public class GlobalExceptionHandler {
         result.setMsg(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Result> handleException(BusinessException e){
+        Result result = new Result();
+        result.setStatus(422);
+        result.setMsg(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(result);
     }
 }

@@ -1,7 +1,11 @@
 package com.web.flowershopping.member.restAPI;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.flowershopping.Entity.Result;
@@ -10,6 +14,7 @@ import com.web.flowershopping.common.sessions;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+
 
 
 @RestController
@@ -21,6 +26,15 @@ public class shoppingCart {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
         Result result = shoppingCartService.selectCartItemsByUserId(user_id);
+        return result;
+    }
+    
+    @PostMapping("/member/shoppingCart")
+    public Result createNewShoppingCart(HttpServletRequest request,@RequestBody Map<String, Object> Requestdata) {
+        //TODO: process POST request
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Result result = shoppingCartService.addCartItem(Integer.valueOf(Requestdata.get("product_id").toString()), Integer.valueOf(Requestdata.get("card_id").toString()), Integer.valueOf(Requestdata.get("user_id").toString()), Integer.valueOf(Requestdata.get("quantity").toString()), (String) Requestdata.get("comment"), Integer.valueOf(Requestdata.get("is_anonymous").toString()));
         return result;
     }
     

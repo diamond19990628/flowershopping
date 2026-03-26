@@ -253,4 +253,8 @@
         </set>
         WHERE product_id = #{product.productId}
     </update>
+
+    <select id="checkStock" resultType="int">
+        SELECT IFNULL(stock_count, 0) FROM stock_master WHERE product_id = #{product_id}
+    </select>
 </mapper>

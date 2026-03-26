@@ -46,4 +46,19 @@
                 sc.user_id = #{userId}
     </select>
 
+    <select id="selectCartItemCount">
+        SELECT COUNT(*) AS shoppingcartCount FROM shopping_cart WHERE user_id = #{user_id} AND product_id = #{product_id}
+    </select>
+
+    <update id="updateCartItemQuantity">
+        UPDATE shopping_cart 
+            SET quantity = quantity + 1
+            WHERE user_id = #{user_id} 
+            AND product_id = #{product_id}
+    </update>
+
+    <insert id="addCartItem" parameterType="com.web.flowershopping.Entity.shoppingCart">
+        INSERT INTO shopping_cart (user_id, product_id, card_id, quantity, is_anonymous, comment) VALUES (#{cartItem.user_id}, #{cartItem.product.productId}, #{cartItem.card.card_id}, #{cartItem.quantity}, #{cartItem.is_anonymous}, #{cartItem.comment})
+    </insert>
+
 </mapper>

@@ -7,6 +7,7 @@ public class shoppingCart {
     private String comment;
     private Integer quantity;
     private String attachedFilePath;
+    private Integer user_id;
     public Product getProduct() {
         return product;
     }
@@ -43,10 +44,17 @@ public class shoppingCart {
     public void setAttachedFilePath(String attachedFilePath) {
         this.attachedFilePath = attachedFilePath;
     }
+    public Integer getUser_id() {
+        return user_id;
+    }
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
+    }
     @Override
     public String toString() {
         return "shoppingCart [product=" + product + ", card=" + card + ", is_anonymous=" + is_anonymous + ", comment="
-                + comment + ", quantity=" + quantity + ", attachedFilePath=" + attachedFilePath + "]";
+                + comment + ", quantity=" + quantity + ", attachedFilePath=" + attachedFilePath + ", user_id=" + user_id
+                + "]";
     }
     
 }

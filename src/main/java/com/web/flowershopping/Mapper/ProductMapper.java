@@ -54,4 +54,7 @@ public interface ProductMapper {
     Category selectCategory(@Param("categoryId") int category_id);
 
     void updateProductCategory(@Param("product") Product product);
+
+    // 查询是否有库存
+    Integer checkStock(@Param("product_id") int product_id);
 }

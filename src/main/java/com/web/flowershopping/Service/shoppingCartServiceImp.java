@@ -3,17 +3,25 @@ package com.web.flowershopping.Service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.web.flowershopping.Entity.Card;
+import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.shoppingCart;
+import com.web.flowershopping.Mapper.ProductMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
 import com.web.flowershopping.common.getImagePath;
+import com.web.flowershopping.common.Exception.BusinessException;
+import com.web.flowershopping.common.Exception.ReadException;
 
 import jakarta.annotation.Resource;
 @Service
 public class shoppingCartServiceImp implements shoppingCartService {
     @Resource
     private ShoppingCartMapper shoppingCartMapper;
+    @Resource
+    private ProductMapper productMapper;
     @Resource
     getImagePath getimagePath;
 
@@ -29,6 +37,48 @@ public class shoppingCartServiceImp implements shoppingCartService {
         Result result = new Result();
         result.setStatus(200);
         result.setData(cartItems);
+        result.setMsg("success");
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public Result addCartItem(int product_id, int card_id, int user_id, int quantity,String comment,Integer is_anonymous) {
+        shoppingCart cartItem = new shoppingCart();
+        Product product = new Product();
+        product.setProductId(product_id);
+        cartItem.setProduct(product);
+        Card card = new Card();
+        card.setCard_id(card_id);
+        cartItem.setCard(card);
+        cartItem.setUser_id(user_id);
+        cartItem.setQuantity(quantity);
+        cartItem.setComment(comment);
+        cartItem.setIs_anonymous(is_anonymous);
+        // 查询商品是否存在
+        Product productInfo = productMapper.selectProductWithID(product_id);
+        if (productInfo == null) {
+            throw new ReadException("商品不存在");
+        }
+        // 查询是否还有库存
+        Integer stock = productMapper.checkStock(product_id);
+        if (stock == 0) {
+            throw new BusinessException("库存不足");
+        }
+        // 查询该商品是否已经在购物车中，如果已经存在则更新数量，否则添加新条目
+        int cartItemCount = shoppingCartMapper.selectCartItemCount(product_id, user_id);
+        if (cartItemCount > 0) {
+            // 已经存在，更新数量
+            shoppingCartMapper.updateCartItemQuantity(product_id, user_id);
+        }else{
+            // 不存在，添加新条目
+            int rowsAffected = shoppingCartMapper.addCartItem(cartItem);
+            if (rowsAffected == 0) {
+                throw new BusinessException("添加购物车失败");
+            }
+        }
+        Result result = new Result();
+        result.setStatus(200);
         result.setMsg("success");
         return result;
     }
