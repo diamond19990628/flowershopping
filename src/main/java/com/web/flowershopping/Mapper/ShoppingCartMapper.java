@@ -21,4 +21,9 @@ public interface ShoppingCartMapper {
     public int addCartItem(
         @Param("cartItem") shoppingCart cartItem
     );
+
+    public int deleteCartItem(
+        @Param("user_id") int user_id,
+        @Param("product_id") int product_id
+    );
 }

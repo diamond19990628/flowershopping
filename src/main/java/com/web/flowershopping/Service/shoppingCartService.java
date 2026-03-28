@@ -9,4 +9,6 @@ public interface shoppingCartService {
     Result selectCartItemsByUserId(int userId);
 
     Result addCartItem(int product_id, int card_id, int user_id, int quantity,String comment,Integer is_anonymous);
+
+    Result deleteCartItem(int user_id, int product_id);
 }

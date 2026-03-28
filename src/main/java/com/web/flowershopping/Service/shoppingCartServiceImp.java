@@ -82,5 +82,19 @@ public class shoppingCartServiceImp implements shoppingCartService {
         result.setMsg("success");
         return result;
     }
+
+    @Transactional
+    @Override
+    public Result deleteCartItem(int user_id, int product_id) {
+        int rowsAffected = shoppingCartMapper.deleteCartItem(user_id, product_id);
+        if (rowsAffected == 0) {
+            throw new ReadException("删除购物车项失败，可能是因为该项不存在");
+        }
+        Result result = new Result();
+        result.setStatus(204);
+        result.setMsg("success");
+        result.setData(rowsAffected);
+        return result;
+    }
     
 }

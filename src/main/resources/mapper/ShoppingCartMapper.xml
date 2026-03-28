@@ -61,4 +61,8 @@
         INSERT INTO shopping_cart (user_id, product_id, card_id, quantity, is_anonymous, comment) VALUES (#{cartItem.user_id}, #{cartItem.product.productId}, #{cartItem.card.card_id}, #{cartItem.quantity}, #{cartItem.is_anonymous}, #{cartItem.comment})
     </insert>
 
+    <delete id="deleteCartItem">
+        DELETE FROM shopping_cart WHERE user_id = #{user_id} AND product_id = #{product_id}
+    </delete>
+
 </mapper>
