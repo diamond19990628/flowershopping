@@ -11,6 +11,7 @@ public class Order {
     private Status status;
     private deliveryType deliverytype;
     private DeliveryAddress deliveryAddress;
+    private LocalDateTime delivery_date;
     private LocalDateTime create_time;
     private LocalDateTime update_time;
     private List<OrderItem> order_items;
@@ -56,6 +57,12 @@ public class Order {
     public void setDeliveryAddress(DeliveryAddress deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
+    public LocalDateTime getDelivery_date() {
+        return delivery_date;
+    }
+    public void setDelivery_date(LocalDateTime delivery_date) {
+        this.delivery_date = delivery_date;
+    }
     public LocalDateTime getCreate_time() {
         return create_time;
     }
@@ -78,9 +85,7 @@ public class Order {
     public String toString() {
         return "Order [order_id=" + order_id + ", order_no=" + order_no + ", user=" + user + ", total_amount="
                 + total_amount + ", status=" + status + ", deliverytype=" + deliverytype + ", deliveryAddress="
-                + deliveryAddress + ", create_time=" + create_time + ", update_time=" + update_time + ", order_items="
-                + order_items + "]";
+                + deliveryAddress + ", delivery_date=" + delivery_date + ", create_time=" + create_time
+                + ", update_time=" + update_time + ", order_items=" + order_items + "]";
     }
-    
-    
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Service.ProductService;
+import com.web.flowershopping.common.sessions;
 import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
@@ -31,8 +32,8 @@ public class product {
 
     @GetMapping("/member/card")
     public Result getMethodName(HttpServletRequest request) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = productService.selectAllCard();
         return result;
     }

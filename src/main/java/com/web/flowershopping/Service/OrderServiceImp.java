@@ -1,17 +1,23 @@
 package com.web.flowershopping.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.web.flowershopping.Entity.DeliveryAddress;
 import com.web.flowershopping.Entity.Order;
 import com.web.flowershopping.Entity.OrderItem;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.Status;
 import com.web.flowershopping.Entity.User;
+import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.common.getImagePath;
 
@@ -23,6 +29,10 @@ public class OrderServiceImp implements OrderService{
     OrderMapper orderMapper;
     @Resource
     getImagePath getImagePath;
+
+    private static final ConcurrentHashMap sessionStore = new ConcurrentHashMap<>();
+
+    Integer order_id = 0;
 
     @Override
     public Result selectAllOrder(String searchString,Integer status_id,boolean is_today_order) {
@@ -70,6 +80,76 @@ public class OrderServiceImp implements OrderService{
         }else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status_id参数非法");
         }
+        return result;
+    }
+
+    // 创建订单，涉及到订单项的创建和库存的扣除，使用事务管理保证数据一致性
+    @Transactional
+    @Override
+    public Result createOrder(List<OrderItem> product_info_array, Integer delivery_type_id, Integer delivery_address_id,
+            LocalDateTime delivery_date, Integer user_id, Integer total_amount) {
+        for(OrderItem orderItem : product_info_array){
+            if(orderItem.getProduct().getProductId() == null || orderItem.getQuantity() == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项参数不完整");
+            }
+            // 获取当前库存量和版本号
+            Map<String, Object> stockInfo = orderMapper.selectStock(orderItem.getProduct().getProductId());
+            if(stockInfo == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存信息不存在");
+            }
+            if((Integer) stockInfo.get("stock_count") <= 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存不足");
+            }
+            // 扣除库存，使用乐观锁版本号控制并发
+            int rowsAffected = orderMapper.updateStock(orderItem.getProduct().getProductId(), orderItem.getQuantity(), (Integer) stockInfo.get("version"));
+            if(rowsAffected == 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存更新失败，可能是由于库存不足或版本号过期，请重试");
+            }
+        }
+        // 订单创建逻辑
+        //创建订单号
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        String time = now.format(formatter);
+        String order_no = time + String.format("%04d", user_id);
+        // 创建锁粒度
+        Object lock = sessionStore.computeIfAbsent(order_no+"_"+user_id, k -> new Object());
+        synchronized(lock){
+            Order order = new Order();
+            User user = new User();
+            deliveryType deliveryType = new deliveryType();
+            DeliveryAddress deliveryAddress = new DeliveryAddress();
+            deliveryType.setDelivery_type_id(delivery_type_id);
+            user.setUser_id(user_id);
+            order.setOrder_no(order_no);
+            order.setUser(user);
+            order.setTotal_amount(total_amount);
+            order.setDeliverytype(deliveryType);
+            deliveryAddress.setDelivery_address_id(delivery_address_id);
+            order.setDeliveryAddress(deliveryAddress);
+            order.setCreate_time(LocalDateTime.now());
+            order.setDelivery_date(delivery_date);
+            int rowsAffected = orderMapper.createOrder(order);
+            if(rowsAffected == 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单创建失败");
+            }
+            // 获取新创建订单的ID
+            order_id = order.getOrder_id();
+            System.out.println("新创建订单ID: " + order_id);
+            // 创建订单项
+            for(OrderItem orderItem : product_info_array){
+                orderItem.setOrder_id(order_id);
+                int itemRowsAffected = orderMapper.createOrderItems(orderItem);
+                if(itemRowsAffected == 0){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项创建失败");
+                }
+            }
+        }
+        Order selectedOrder = orderMapper.selectOrderById(order_id);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(selectedOrder);
         return result;
     }
 }

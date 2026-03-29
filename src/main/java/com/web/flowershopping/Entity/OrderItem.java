@@ -1,12 +1,19 @@
 package com.web.flowershopping.Entity;
 
 public class OrderItem {
+    private Integer order_id;
     private Product product;
     private Card card;
     private Integer is_anonymous;
     private String comment;
     private Integer quantity;
     private String attachedFilePath;
+    public Integer getOrder_id() {
+        return order_id;
+    }
+    public void setOrder_id(Integer order_id) {
+        this.order_id = order_id;
+    }
     public Product getProduct() {
         return product;
     }
@@ -45,8 +52,10 @@ public class OrderItem {
     }
     @Override
     public String toString() {
-        return "OrderItem [product=" + product + ", card=" + card + ", is_anonymous=" + is_anonymous + ", comment="
-                + comment + ", quantity=" + quantity + ", attachedFilePath=" + attachedFilePath + "]";
+        return "OrderItem [order_id=" + order_id + ", product=" + product + ", card=" + card + ", is_anonymous="
+                + is_anonymous + ", comment=" + comment + ", quantity=" + quantity + ", attachedFilePath="
+                + attachedFilePath + "]";
     }
+    
     
 }

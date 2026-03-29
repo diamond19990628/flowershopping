@@ -52,8 +52,11 @@ CREATE TABLE attached_file_master(
 );
 CREATE TABLE stock_master(
     product_id int not null PRIMARY KEY,
-    stock_count int not null
+    stock_count int not null,
+    version int not null default 0
 )
+alter table stock_master
+add version int not null default 0;
 select * from product_master
 INSERT INTO stock_master VALUES
 (2,50),

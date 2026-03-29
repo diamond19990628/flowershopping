@@ -1,7 +1,6 @@
 CREATE TABLE order_master (
     order_id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '订单ID',
     order_no VARCHAR(64) NOT NULL UNIQUE COMMENT '系统订单编号',
-    out_trade_no VARCHAR(64) NOT NULL UNIQUE COMMENT '微信商户订单号',
     wx_transaction_id VARCHAR(64) DEFAULT NULL COMMENT '微信支付订单号',
 
     user_id BIGINT NOT NULL COMMENT '用户ID',
@@ -27,7 +26,6 @@ CREATE TABLE order_master (
     INDEX idx_user_id (user_id),
     INDEX idx_status_id (status_id),
     INDEX idx_delivery_type_id (delivery_type_id),
-    INDEX idx_out_trade_no (out_trade_no),
     INDEX idx_wx_transaction_id (wx_transaction_id)
 );
 CREATE TABLE order_item (
