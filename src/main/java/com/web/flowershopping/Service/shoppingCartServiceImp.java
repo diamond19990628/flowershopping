@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.web.flowershopping.Entity.Card;
+import com.web.flowershopping.Entity.DeliveryAddress;
 import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.shoppingCart;
@@ -96,5 +97,14 @@ public class shoppingCartServiceImp implements shoppingCartService {
         result.setData(rowsAffected);
         return result;
     }
-    
+
+    @Override
+    public Result selectDeliveryAddressByUserId(int user_id) {
+        List<DeliveryAddress> deliveryAddress = shoppingCartMapper.selectDeliveryAddressByUserId(user_id);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(deliveryAddress);
+        result.setMsg("success");
+        return result;
+    }
 }

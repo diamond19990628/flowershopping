@@ -14,10 +14,14 @@ import com.web.flowershopping.Entity.Card;
 import com.web.flowershopping.Entity.OrderItem;
 import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
+import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Service.OrderService;
+import com.web.flowershopping.common.sessions;
+import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 
 @RestController
@@ -27,8 +31,8 @@ public class Orders {
     @PostMapping("/member/orders")
     public Result createOrder(HttpServletRequest request, @RequestBody Map<String, Object> Requestdata) {
         //TODO: process POST request
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         List<Map<String, Object>> rawList =(List<Map<String, Object>>) Requestdata.get("product_info_array");
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -53,5 +57,26 @@ public class Orders {
         Result result = orderService.createOrder(orderItems, delivery_type_id, delivery_address_id, delivery_date_str, user_id, total_amount);
         return result;
     }
-    
+
+    // 微信支付
+    @PostMapping("/member/orders/wechat-pay")
+    public Result wechatPay(HttpServletRequest request, @RequestBody Map<String, Object> Requestdata) {
+        //TODO: process POST request
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        String order_no = (String) Requestdata.get("order_no");
+        Integer total_amount = (Integer) Requestdata.get("total_amount");
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user_id");
+        if(user == null){
+            throw new ParamException("用户未登录");
+        }
+        String openId = user.getOpenid();
+        if(openId == null || openId.isEmpty()){
+            throw new ParamException("用户未绑定微信，无法使用微信支付");
+        }
+        // 微信支付逻辑
+        Result result = orderService.pay(order_no, total_amount, openId);
+        return result;
+    }
 }

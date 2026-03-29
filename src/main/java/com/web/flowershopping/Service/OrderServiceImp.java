@@ -2,6 +2,7 @@ package com.web.flowershopping.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +20,8 @@ import com.web.flowershopping.Entity.Status;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
+import com.web.flowershopping.Mapper.ShoppingCartMapper;
+import com.web.flowershopping.common.OrderCreateGuard;
 import com.web.flowershopping.common.getImagePath;
 
 import jakarta.annotation.Resource;
@@ -27,6 +30,9 @@ import jakarta.annotation.Resource;
 public class OrderServiceImp implements OrderService{
     @Resource
     OrderMapper orderMapper;
+
+    @Resource
+    ShoppingCartMapper shoppingCartMapper;
     @Resource
     getImagePath getImagePath;
 
@@ -100,6 +106,9 @@ public class OrderServiceImp implements OrderService{
             if((Integer) stockInfo.get("stock_count") <= 0){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存不足");
             }
+            if((Integer)stockInfo.get("stock_count")-orderItem.getQuantity() < 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存不足，无法满足订单需求");
+            }
             // 扣除库存，使用乐观锁版本号控制并发
             int rowsAffected = orderMapper.updateStock(orderItem.getProduct().getProductId(), orderItem.getQuantity(), (Integer) stockInfo.get("version"));
             if(rowsAffected == 0){
@@ -114,8 +123,16 @@ public class OrderServiceImp implements OrderService{
         String time = now.format(formatter);
         String order_no = time + String.format("%04d", user_id);
         // 创建锁粒度
-        Object lock = sessionStore.computeIfAbsent(order_no+"_"+user_id, k -> new Object());
-        synchronized(lock){
+        OrderCreateGuard orderCreateGuard = new OrderCreateGuard();
+        if(!orderCreateGuard.canCreateOrder(user_id)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请勿重复提交订单");
+        }
+        try{
+            // 再次确认订单号唯一性，防止并发创建订单时订单号重复
+            Order existingOrder = orderMapper.selectOrderByOrderNo(order_no);
+            if(existingOrder != null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单号已存在，请重试");
+            }
             Order order = new Order();
             User user = new User();
             deliveryType deliveryType = new deliveryType();
@@ -145,11 +162,46 @@ public class OrderServiceImp implements OrderService{
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项创建失败");
                 }
             }
+            orderCreateGuard.canCreateOrder(user_id);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单创建失败: " + e.getMessage());
         }
         Order selectedOrder = orderMapper.selectOrderById(order_id);
+        // 删除购物车
+        for(OrderItem orderItem : product_info_array){
+            shoppingCartMapper.deleteCartItem(user_id, orderItem.getProduct().getProductId());
+        }
         Result result = new Result();
         result.setStatus(200);
         result.setData(selectedOrder);
+        return result;
+    }
+
+    // 支付接口，暂时不实装，后续根据具体支付方式和流程进行设计
+    @Override
+    public Result pay(String order_no, Integer total_amount, String openId) {
+        // 乐观锁查询订单信息，确认订单状态和金额
+        Order order = orderMapper.selectOrderByOrderNo(order_no);
+        // 根据用户id获取openid（微信支付需要）
+        if(order == null ){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单不存在");
+        }
+        if(order.getTotal_amount() != total_amount){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "支付金额与订单金额不匹配");
+        }
+        if(order.getStatus().getStatusId() != 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单状态不合法，无法支付");
+        }
+        // 调用支付接口（暂时没有接口，所以先这样）
+        Map<String, Object> paymentResult = new HashMap<>();
+        paymentResult.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
+        paymentResult.put("nonceStr", "随机字符串");
+        paymentResult.put("package", "prepay_id=预支付交易会话标识");
+        paymentResult.put("signType", "MD5");
+        paymentResult.put("paySign", "签名");
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(paymentResult);
         return result;
     }
 }

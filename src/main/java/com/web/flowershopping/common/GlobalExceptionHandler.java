@@ -1,5 +1,9 @@
 package com.web.flowershopping.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -98,5 +102,14 @@ public class GlobalExceptionHandler {
         result.setMsg(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(result);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDBException(Exception e) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1001);
+        result.put("message", "库存不足");
+
+        return ResponseEntity.status(400).body(result);
     }
 }

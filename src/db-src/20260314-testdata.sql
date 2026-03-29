@@ -1,28 +1,11 @@
 create table delivery_address_master(
-    delivery_address_id INT NOT NULL,
-    delivery_address TEXT NOT NULL,
+    delivery_address_id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
-    PRIMARY KEY(delivery_address_id,user_id)
+    delivery_address VARCHAR(255) NOT NULL,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    FOREIGN KEY (user_id) REFERENCES USER_MASTER(user_id)
 )
-INSERT INTO delivery_address_master VALUES (1,'南京市玄武区中山东路1号',11);
-INSERT INTO delivery_address_master VALUES (2,'南京市鼓楼区湖南路88号',11);
-INSERT INTO delivery_address_master VALUES (3,'南京市建邺区江东中路222号',11);
-
-INSERT INTO delivery_address_master VALUES (1,'南京市秦淮区夫子庙贡院街99号',12);
-INSERT INTO delivery_address_master VALUES (2,'南京市雨花台区软件大道168号',12);
-INSERT INTO delivery_address_master VALUES (3,'南京市栖霞区仙林大道163号',12);
-
-INSERT INTO delivery_address_master VALUES (1,'南京市江宁区胜太路88号',13);
-INSERT INTO delivery_address_master VALUES (2,'南京市浦口区江浦街道文德路66号',13);
-INSERT INTO delivery_address_master VALUES (3,'南京市六合区雄州东路100号',13);
-
-INSERT INTO delivery_address_master VALUES (1,'南京市建邺区河西大街101号',14);
-INSERT INTO delivery_address_master VALUES (2,'南京市玄武区珠江路699号',14);
-INSERT INTO delivery_address_master VALUES (3,'南京市鼓楼区中央路399号',14);
-
-INSERT INTO delivery_address_master VALUES (1,'南京市雨花台区铁心桥大街88号',15);
-INSERT INTO delivery_address_master VALUES (2,'南京市秦淮区中华路305号',15);
-INSERT INTO delivery_address_master VALUES (3,'南京市江宁区天元东路388号',15);
 
 
 select

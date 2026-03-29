@@ -51,5 +51,14 @@ public class shoppingCart {
         }
         return ResponseEntity.status(500).build();
     }
+
+    // 获取送货地址
+    @GetMapping("/member/deliveryAddress/{user_id}")
+    public Result getDeliveryAddress(HttpServletRequest request,@PathVariable("user_id") Integer user_id) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = shoppingCartService.selectDeliveryAddressByUserId(user_id);
+        return result;
+    }
     
 }

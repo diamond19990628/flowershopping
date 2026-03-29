@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.web.flowershopping.Entity.DeliveryAddress;
 import com.web.flowershopping.Entity.shoppingCart;
 
 @Mapper
@@ -26,4 +27,6 @@ public interface ShoppingCartMapper {
         @Param("user_id") int user_id,
         @Param("product_id") int product_id
     );
+
+    public List<DeliveryAddress> selectDeliveryAddressByUserId(@Param("user_id") Integer user_id);
 }

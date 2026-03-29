@@ -48,4 +48,9 @@ public interface OrderMapper {
     public Order selectOrderById(
         @Param("order_id") Integer order_id
     );
+
+    // 通过订单编号查询订单详情
+    public Order selectOrderByOrderNo(
+        @Param("order_no") String order_no
+    );
 }

@@ -20,6 +20,11 @@
         </association>
     </resultMap>
 
+    <resultMap id="deliveryAddressMap" type="com.web.flowershopping.Entity.DeliveryAddress">
+        <result property="delivery_address_id" column="delivery_address_id"/>
+        <result property="delivery_address" column="delivery_address"/>
+    </resultMap>
+
     <select id="selectCartItemsByUserId" parameterType="int" resultMap="cartItemMap">
             select
                 pm.product_id,
@@ -48,6 +53,10 @@
 
     <select id="selectCartItemCount">
         SELECT COUNT(*) AS shoppingcartCount FROM shopping_cart WHERE user_id = #{user_id} AND product_id = #{product_id}
+    </select>
+
+    <select id="selectDeliveryAddressByUserId" resultMap="deliveryAddressMap">
+        SELECT * FROM delivery_address_master WHERE user_id = #{user_id}
     </select>
 
     <update id="updateCartItemQuantity">
