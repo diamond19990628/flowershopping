@@ -189,8 +189,11 @@
 
     <!-- 查询当前库存 -->
     <select id="selectStock" resultType="map">
-        SELECT stock_count, version FROM stock_master WHERE product_id = #{product_id}
-        AND stock_count &gt;0
+        SELECT stock_master.stock_count, stock_master.version FROM stock_master
+        INNER JOIN product_master ON stock_master.product_id = product_master.product_id
+        WHERE stock_master.product_id = #{product_id}
+        AND stock_master.stock_count &gt;0
+        AND product_master.status = 1
     </select>
 
     <!-- 更新库存 -->
