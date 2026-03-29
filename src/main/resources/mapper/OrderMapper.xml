@@ -82,7 +82,7 @@
             INNER JOIN
                 order_status_master osm
             ON  osm.status_id = om.status_id
-            INNER JOIN
+            LEFT JOIN
                 delivery_address_master dam
             ON  dam.user_id = UM.user_id
             AND dam.delivery_address_id = om.Delivery_address_id
@@ -141,7 +141,7 @@
             INNER JOIN
                 order_status_master osm
             ON  osm.status_id = om.status_id
-            INNER JOIN
+            LEFT JOIN
                 delivery_address_master dam
             ON  dam.user_id = UM.user_id
             AND dam.delivery_address_id = om.Delivery_address_id
