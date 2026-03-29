@@ -37,7 +37,8 @@ public interface OrderMapper {
     );
 
     public int createOrder(
-        @Param("order") Order order
+        @Param("order") Order order,
+        @Param("request_no") String requestNo
     );
 
     public int createOrderItems(
@@ -51,6 +52,7 @@ public interface OrderMapper {
 
     // 通过订单编号查询订单详情
     public Order selectOrderByOrderNo(
-        @Param("order_no") String order_no
+        @Param("order_no") String order_no,
+        @Param("request_no") String request_no
     );
 }

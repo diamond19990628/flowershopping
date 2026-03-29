@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +55,8 @@ public class Orders {
         Integer delivery_type_id = (Integer) Requestdata.get("delivery_type_id");
         Integer delivery_address_id = (Integer) Requestdata.get("delivery_address_id");
         LocalDateTime delivery_date_str = LocalDateTime.parse(Requestdata.get("delivery_date").toString(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Result result = orderService.createOrder(orderItems, delivery_type_id, delivery_address_id, delivery_date_str, user_id, total_amount);
+        String requestNo = (String)Requestdata.get("request_no");
+        Result result = orderService.createOrder(orderItems, delivery_type_id, delivery_address_id, delivery_date_str, user_id, total_amount, requestNo);
         return result;
     }
 
@@ -68,6 +70,7 @@ public class Orders {
         Integer total_amount = (Integer) Requestdata.get("total_amount");
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user_id");
+        System.out.println((User) session.getAttribute("user_id"));
         if(user == null){
             throw new ParamException("用户未登录");
         }
@@ -79,4 +82,18 @@ public class Orders {
         Result result = orderService.pay(order_no, total_amount, openId);
         return result;
     }
+
+    // 生成requestNo
+    @PostMapping("/member/orders/requestNo")
+    public Result generateRequestNo(HttpServletRequest request) {
+        //TODO: process POST request
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        String requestNo = UUID.randomUUID().toString();
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(requestNo);
+        return result;
+    }
+    
 }

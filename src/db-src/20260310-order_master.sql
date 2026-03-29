@@ -22,6 +22,7 @@ CREATE TABLE order_master (
 
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    requestNo VARCHAR(64) DEFAULT NULL COMMENT '请求号，幂等控制' unique,
 
     INDEX idx_user_id (user_id),
     INDEX idx_status_id (status_id),

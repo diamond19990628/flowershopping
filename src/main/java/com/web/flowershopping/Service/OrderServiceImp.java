@@ -21,7 +21,6 @@ import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
-import com.web.flowershopping.common.OrderCreateGuard;
 import com.web.flowershopping.common.getImagePath;
 
 import jakarta.annotation.Resource;
@@ -93,7 +92,7 @@ public class OrderServiceImp implements OrderService{
     @Transactional
     @Override
     public Result createOrder(List<OrderItem> product_info_array, Integer delivery_type_id, Integer delivery_address_id,
-            LocalDateTime delivery_date, Integer user_id, Integer total_amount) {
+            LocalDateTime delivery_date, Integer user_id, Integer total_amount, String requestNo) {
         for(OrderItem orderItem : product_info_array){
             if(orderItem.getProduct().getProductId() == null || orderItem.getQuantity() == null){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项参数不完整");
@@ -123,49 +122,40 @@ public class OrderServiceImp implements OrderService{
         String time = now.format(formatter);
         String order_no = time + String.format("%04d", user_id);
         // 创建锁粒度
-        OrderCreateGuard orderCreateGuard = new OrderCreateGuard();
-        if(!orderCreateGuard.canCreateOrder(user_id)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请勿重复提交订单");
+        // 再次确认订单号唯一性，防止并发创建订单时订单号重复
+        Order existingOrder = orderMapper.selectOrderByOrderNo(order_no, requestNo);
+        if(existingOrder != null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单号已存在，请重试");
         }
-        try{
-            // 再次确认订单号唯一性，防止并发创建订单时订单号重复
-            Order existingOrder = orderMapper.selectOrderByOrderNo(order_no);
-            if(existingOrder != null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单号已存在，请重试");
-            }
-            Order order = new Order();
-            User user = new User();
-            deliveryType deliveryType = new deliveryType();
-            DeliveryAddress deliveryAddress = new DeliveryAddress();
-            deliveryType.setDelivery_type_id(delivery_type_id);
-            user.setUser_id(user_id);
-            order.setOrder_no(order_no);
-            order.setUser(user);
-            order.setTotal_amount(total_amount);
-            order.setDeliverytype(deliveryType);
-            deliveryAddress.setDelivery_address_id(delivery_address_id);
-            order.setDeliveryAddress(deliveryAddress);
-            order.setCreate_time(LocalDateTime.now());
-            order.setDelivery_date(delivery_date);
-            int rowsAffected = orderMapper.createOrder(order);
-            if(rowsAffected == 0){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单创建失败");
-            }
-            // 获取新创建订单的ID
-            order_id = order.getOrder_id();
-            System.out.println("新创建订单ID: " + order_id);
-            // 创建订单项
-            for(OrderItem orderItem : product_info_array){
-                orderItem.setOrder_id(order_id);
-                int itemRowsAffected = orderMapper.createOrderItems(orderItem);
-                if(itemRowsAffected == 0){
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项创建失败");
-                }
-            }
-            orderCreateGuard.canCreateOrder(user_id);
-        }catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单创建失败: " + e.getMessage());
+        Order order = new Order();
+        User user = new User();
+        deliveryType deliveryType = new deliveryType();
+        DeliveryAddress deliveryAddress = new DeliveryAddress();
+        deliveryType.setDelivery_type_id(delivery_type_id);
+        user.setUser_id(user_id);
+        order.setOrder_no(order_no);
+        order.setUser(user);
+        order.setTotal_amount(total_amount);
+        order.setDeliverytype(deliveryType);
+        deliveryAddress.setDelivery_address_id(delivery_address_id);
+        order.setDeliveryAddress(deliveryAddress);
+        order.setCreate_time(LocalDateTime.now());
+        order.setDelivery_date(delivery_date);
+        int rowsAffected = orderMapper.createOrder(order,requestNo);
+        if(rowsAffected == 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单创建失败");
         }
+        // 获取新创建订单的ID
+        order_id = order.getOrder_id();
+        // 创建订单项
+        for(OrderItem orderItem : product_info_array){
+            orderItem.setOrder_id(order_id);
+            int itemRowsAffected = orderMapper.createOrderItems(orderItem);
+            if(itemRowsAffected == 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项创建失败");
+            }
+        }
+        
         Order selectedOrder = orderMapper.selectOrderById(order_id);
         // 删除购物车
         for(OrderItem orderItem : product_info_array){
@@ -181,7 +171,7 @@ public class OrderServiceImp implements OrderService{
     @Override
     public Result pay(String order_no, Integer total_amount, String openId) {
         // 乐观锁查询订单信息，确认订单状态和金额
-        Order order = orderMapper.selectOrderByOrderNo(order_no);
+        Order order = orderMapper.selectOrderByOrderNo(order_no,null);
         // 根据用户id获取openid（微信支付需要）
         if(order == null ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单不存在");

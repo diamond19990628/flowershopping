@@ -220,6 +220,9 @@
             AND dam.delivery_address_id = om.Delivery_address_id
         where
             om.order_no = #{order_no}
+            <if test="request_no != null">
+                AND om.requestNo = #{request_no}
+            </if>
     </select>
 
     <update id="changeOrderStatus">
@@ -250,9 +253,9 @@
     </update>
 
     <!-- 创建订单 -->
-    <insert id="createOrder" useGeneratedKeys="true" keyProperty="order_id">
-        INSERT INTO order_master (order_no, user_id, total_amount, status_id, delivery_type_id, delivery_address_id, delivery_date, create_time)
-        VALUES (#{order.order_no}, #{order.user.user_id}, #{order.total_amount}, 0, #{order.deliverytype.delivery_type_id}, #{order.deliveryAddress.delivery_address_id}, #{order.delivery_date}, #{order.create_time})
+    <insert id="createOrder" useGeneratedKeys="true" keyProperty="order.order_id">
+        INSERT INTO order_master (order_no, user_id, total_amount, status_id, delivery_type_id, delivery_address_id, delivery_date, create_time, requestNo)
+        VALUES (#{order.order_no}, #{order.user.user_id}, #{order.total_amount}, 0, #{order.deliverytype.delivery_type_id}, #{order.deliveryAddress.delivery_address_id}, #{order.delivery_date}, #{order.create_time}, #{request_no})
     </insert>
 
     <!-- 创建订单项 -->
