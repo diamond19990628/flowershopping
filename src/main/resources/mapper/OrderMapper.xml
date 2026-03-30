@@ -245,10 +245,24 @@
         AND product_master.status = 1
     </select>
 
+    <select id="selectStockById" resultType="map">
+        SELECT stock_master.stock_count, stock_master.version FROM stock_master
+        INNER JOIN product_master ON stock_master.product_id = product_master.product_id
+        WHERE stock_master.product_id = #{product_id}
+        AND product_master.status = 1
+    </select>
+
     <!-- 更新库存 -->
     <update id="updateStock">
         UPDATE stock_master
         SET stock_count = stock_count - #{quantity}, version = version + 1
+        WHERE product_id = #{product_id} AND version = #{version}
+    </update>
+
+    <!-- 恢复库存 -->
+    <update id="restoreStock">
+        UPDATE stock_master
+        SET stock_count = stock_count + #{quantity}, version = version + 1
         WHERE product_id = #{product_id} AND version = #{version}
     </update>
 
@@ -263,4 +277,14 @@
         INSERT INTO order_item (order_id, product_id, card_id, quantity, is_anonymous, comment)
         VALUES (#{orderItems.order_id}, #{orderItems.product.productId}, #{orderItems.card.card_id}, #{orderItems.quantity}, #{orderItems.is_anonymous}, #{orderItems.comment})
     </insert>
+
+    <!-- 根据订单编号删除订单 -->
+    <delete id="deleteOrderByOrderNo">
+        DELETE FROM order_master WHERE order_no = #{order_no}
+    </delete>
+
+    <!-- 根据订单ID删除订单项 -->
+    <delete id="deleteOrderItemsByOrderId">
+        DELETE FROM order_item WHERE order_id = #{order_id}
+    </delete>
 </mapper>

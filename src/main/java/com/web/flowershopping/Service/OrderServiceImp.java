@@ -21,6 +21,7 @@ import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
+import com.web.flowershopping.common.RabbitMQService;
 import com.web.flowershopping.common.getImagePath;
 
 import jakarta.annotation.Resource;
@@ -34,6 +35,8 @@ public class OrderServiceImp implements OrderService{
     ShoppingCartMapper shoppingCartMapper;
     @Resource
     getImagePath getImagePath;
+    @Resource
+    RabbitMQService rabbitMQService;
 
     private static final ConcurrentHashMap sessionStore = new ConcurrentHashMap<>();
 
@@ -164,6 +167,8 @@ public class OrderServiceImp implements OrderService{
         Result result = new Result();
         result.setStatus(200);
         result.setData(selectedOrder);
+        // 订单创建成功后发送3分钟的延迟消息到RabbitMQ，消费者收到消息后检查订单是否支付，如果未支付则取消订单并恢复库存
+        rabbitMQService.sendMessage(order_no);
         return result;
     }
 

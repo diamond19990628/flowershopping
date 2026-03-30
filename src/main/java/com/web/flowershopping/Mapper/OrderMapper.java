@@ -29,8 +29,18 @@ public interface OrderMapper {
         @Param("product_id") Integer product_id
     );
 
+    public Map<String, Object> selectStockById(
+        @Param("product_id") Integer product_id
+    );
+
     // 更新库存，使用乐观锁版本号控制并发
     public int updateStock(
+        @Param("product_id") Integer product_id,
+        @Param("quantity") Integer quantity,
+        @Param("version") Integer version
+    );
+
+    public int restoreStock(
         @Param("product_id") Integer product_id,
         @Param("quantity") Integer quantity,
         @Param("version") Integer version
@@ -50,9 +60,22 @@ public interface OrderMapper {
         @Param("order_id") Integer order_id
     );
 
+    // 通过订单ID查询订单项详情
+    public List<OrderItem> selectOrderItemByOrderId(
+        @Param("order_id") Integer order_id
+    );
+
     // 通过订单编号查询订单详情
     public Order selectOrderByOrderNo(
         @Param("order_no") String order_no,
         @Param("request_no") String request_no
+    );
+
+    public int deleteOrderByOrderNo(
+        @Param("order_no") String order_no
+    );
+
+    public int deleteOrderItemsByOrderId(
+        @Param("order_id") Integer order_id
     );
 }
