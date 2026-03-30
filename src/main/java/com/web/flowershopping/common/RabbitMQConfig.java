@@ -15,7 +15,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue orderDelayQueue() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 30000); // 3分钟
+        args.put("x-message-ttl", 540000); // 3分钟
         args.put("x-dead-letter-exchange", "order.exchange");
         args.put("x-dead-letter-routing-key", "order.check");
         return new Queue("order.delay.queue", true, false, false, args);
