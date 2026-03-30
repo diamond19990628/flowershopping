@@ -17,6 +17,7 @@ CREATE TABLE order_master (
     delivery_date DATETIME DEFAULT NULL COMMENT '配送时间或者自取时间',
 
     pay_time DATETIME DEFAULT NULL COMMENT '支付成功时间',
+    pay_status INT NOT NULL DEFAULT 0 COMMENT '支付状态 0未支付 1支付成功 2支付失败',
     cancel_time DATETIME DEFAULT NULL COMMENT '取消时间',
     close_reason VARCHAR(255) DEFAULT NULL COMMENT '取消/关闭原因',
 

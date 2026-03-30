@@ -55,7 +55,7 @@ public class Orders {
         Integer delivery_type_id = (Integer) Requestdata.get("delivery_type_id");
         Integer delivery_address_id = (Integer) Requestdata.get("delivery_address_id");
         LocalDateTime delivery_date_str = LocalDateTime.parse(Requestdata.get("delivery_date").toString(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String requestNo = (String)Requestdata.get("request_no");
+        String requestNo = (String)Requestdata.get("requestNo");
         Result result = orderService.createOrder(orderItems, delivery_type_id, delivery_address_id, delivery_date_str, user_id, total_amount, requestNo);
         return result;
     }
