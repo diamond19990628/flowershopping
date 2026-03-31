@@ -213,4 +213,52 @@ public class OrderServiceImp implements OrderService{
         result.setStatus(200);
         return result;
     }
+
+    @Override
+    public Result selectOrderByUserId(Integer user_id, Integer status_id) {
+        // TODO Auto-generated method stub
+        List<Order> orderInfoResult = orderMapper.selectOrderByUserId(user_id, status_id);
+        for(Order order : orderInfoResult){
+            for(OrderItem orderItem : order.getOrder_items()){
+                // 图片置换
+                String imagePath = getImagePath.changeImagePath(orderItem.getAttachedFilePath());
+                orderItem.setAttachedFilePath(imagePath);
+            }
+        }
+        Result result = new Result();
+        result.setData(orderInfoResult);
+        result.setStatus(200);
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public Result changeOrderStatusByOrderNo(Integer status_id, String order_no) {
+        // 获取订单信息
+        Order order = orderMapper.selectOrderByOrderNo(order_no,null);
+        if(order == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单不存在");
+        }
+        if(order.getStatus().getStatusId() == status_id){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单已处于该状态");
+        }
+        if(status_id==3 && order.getStatus().getStatusId() != 2){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单状态不合法，无法确认收货");
+        }
+        if(status_id != 3){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单状态不合法，无法更新订单状态");
+        }
+        // 根据status_id执行不同的操作
+        orderMapper.changeOrderStatusByOrderNo(status_id, order_no);
+        Order updatedOrder = orderMapper.selectOrderByOrderNo(order_no,null);
+        for(OrderItem orderItem : updatedOrder.getOrder_items()){
+            // 图片置换
+            String imagePath = getImagePath.changeImagePath(orderItem.getAttachedFilePath());
+            orderItem.setAttachedFilePath(imagePath);
+        }
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(updatedOrder);
+        return result;
+    }
 }

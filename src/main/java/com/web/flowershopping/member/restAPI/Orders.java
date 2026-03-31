@@ -9,8 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.flowershopping.Entity.Card;
@@ -27,6 +31,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import okhttp3.Headers;
+
 
 
 @RestController
@@ -63,6 +68,26 @@ public class Orders {
         Result result = orderService.createOrder(orderItems, delivery_type_id, delivery_address_id, delivery_date_str, user_id, total_amount, requestNo);
         return result;
     }
+
+    // 获取订单列表
+    @GetMapping("/member/orders/{user_id}")
+    public Result getMethodName(HttpServletRequest request, @PathVariable("user_id") Integer user_id,@RequestParam(value = "status_id", defaultValue = "0") Integer status_id) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = orderService.selectOrderByUserId(user_id, status_id);
+        return result;
+    }
+
+    // 修改订单状态，主要用于用户取消订单等操作
+    @PatchMapping("/member/orders/{order_no}")
+    public Result patchOrders(HttpServletRequest request,@PathVariable("order_no")String order_no,@RequestBody Map<String, Object> data){
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        Integer status_id = Integer.valueOf(data.get("status_id").toString());
+        Result result = orderService.changeOrderStatusByOrderNo(status_id, order_no);
+        return result;
+    }
+    
 
     // 微信支付
     @PostMapping("/member/orders/wechat-pay")

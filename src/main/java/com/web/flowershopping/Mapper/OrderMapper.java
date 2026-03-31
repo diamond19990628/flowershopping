@@ -20,9 +20,19 @@ public interface OrderMapper {
         @Param("is_today_order") boolean isTodayOrder
     );
 
+    public List<Order> selectOrderByUserId(
+        @Param("user_id") Integer user_id,
+        @Param("status_id") Integer status_id
+    );
+
     public void changeOrderStatus(
         @Param("status_id") Integer status_id,
         @Param("order_id") Integer order_id
+    );
+
+    public void changeOrderStatusByOrderNo(
+        @Param("status_id") Integer status_id,
+        @Param("order_no") String order_no
     );
 
     public void changeOrderPayStatusByOrderId(
