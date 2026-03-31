@@ -17,5 +17,5 @@ CREATE TABLE stock_master(
     product_id int not null PRIMARY KEY,
     stock_count int not null,
     version int not null default 0,
-    CHECK (stock >= 0)
+    CHECK (stock_count >= 0)
 );
