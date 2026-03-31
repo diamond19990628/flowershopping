@@ -79,7 +79,7 @@
             order_master om
             INNER JOIN
                 USER_MASTER UM
-            ON  um.user_id = om.user_id
+            ON  UM.user_id = om.user_id
             INNER JOIN
                 delivery_type_master dym
             ON  dym.delivery_type_id = om.delivery_type_id
@@ -140,7 +140,7 @@
             order_master om
             INNER JOIN
                 USER_MASTER UM
-            ON  um.user_id = om.user_id
+            ON  UM.user_id = om.user_id
             INNER JOIN
                 delivery_type_master dym
             ON  dym.delivery_type_id = om.delivery_type_id
@@ -194,7 +194,7 @@
             order_master om
             INNER JOIN
                 USER_MASTER UM
-            ON  um.user_id = om.user_id
+            ON  UM.user_id = om.user_id
             INNER JOIN
                 delivery_type_master dym
             ON  dym.delivery_type_id = om.delivery_type_id
@@ -269,7 +269,7 @@
             order_master om
             INNER JOIN
                 USER_MASTER UM
-            ON  um.user_id = om.user_id
+            ON  UM.user_id = om.user_id
             INNER JOIN
                 delivery_type_master dym
             ON  dym.delivery_type_id = om.delivery_type_id
