@@ -50,7 +50,7 @@ create table order_status_master(
     status_name varchar(40) NOT NULL,
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-)
+);
 INSERT INTO order_status_master(status_id,status_name) VALUES(0,"待支付");
 INSERT INTO order_status_master(status_id,status_name) VALUES(1,"已支付");
 INSERT INTO order_status_master(status_id,status_name) VALUES(2,"发货中");
@@ -61,7 +61,7 @@ INSERT INTO order_status_master(status_id,status_name) VALUES(5,"退款已到账
 create table delivery_type_master(
     delivery_type_id INT NOT NULL PRIMARY KEY,
     delivery_type_name VARCHAR(20) NOT NULL
-)
+);
 
 INSERT INTO delivery_type_master values(1,'自取');
 INSERT INTO delivery_type_master values(2,'配送');
