@@ -9,6 +9,7 @@ public class Order {
     private User user;
     private int total_amount;
     private Status status;
+    private Integer pay_status;
     private deliveryType deliverytype;
     private DeliveryAddress deliveryAddress;
     private LocalDateTime delivery_date;
@@ -81,11 +82,18 @@ public class Order {
     public void setOrder_items(List<OrderItem> order_items) {
         this.order_items = order_items;
     }
+    public Integer getPay_status() {
+        return pay_status;
+    }
+    public void setPay_status(Integer pay_status) {
+        this.pay_status = pay_status;
+    }
     @Override
     public String toString() {
         return "Order [order_id=" + order_id + ", order_no=" + order_no + ", user=" + user + ", total_amount="
-                + total_amount + ", status=" + status + ", deliverytype=" + deliverytype + ", deliveryAddress="
-                + deliveryAddress + ", delivery_date=" + delivery_date + ", create_time=" + create_time
-                + ", update_time=" + update_time + ", order_items=" + order_items + "]";
+                + total_amount + ", status=" + status + ", pay_status=" + pay_status + ", deliverytype=" + deliverytype
+                + ", deliveryAddress=" + deliveryAddress + ", delivery_date=" + delivery_date + ", create_time="
+                + create_time + ", update_time=" + update_time + ", order_items=" + order_items + "]";
     }
+    
 }

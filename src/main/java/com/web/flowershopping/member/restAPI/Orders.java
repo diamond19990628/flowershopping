@@ -1,8 +1,10 @@
 package com.web.flowershopping.member.restAPI;
 
+import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,12 +19,14 @@ import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Service.OrderService;
+import com.web.flowershopping.common.WXPayUtility;
 import com.web.flowershopping.common.sessions;
 import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import okhttp3.Headers;
 
 
 @RestController
@@ -83,6 +87,45 @@ public class Orders {
         return result;
     }
 
+    // 支付成功后专用的回调接口，供微信支付回调使用，更新订单支付状态
+    @PostMapping("/pay/notify")
+    public Map<String,String> notify(@RequestBody String body,
+                                  HttpServletRequest request) {
+        try{
+            Headers headers = extractHeaders(request);
+            String apiV3Key = "testkey";
+            String wechatpayPublicKey = "test2key";
+            WXPayUtility wxPayUtility = new WXPayUtility();
+            PublicKey wechatpayPublicKeyObj = wxPayUtility.loadPublicKeyFromPath("classpath:certs/wechatpay_public_key.pem");
+            WXPayUtility.Notification notification = wxPayUtility.parseNotification(apiV3Key, wechatpayPublicKey, wechatpayPublicKeyObj, headers, body);
+            String plaintext = notification.getPlaintext();
+            Map<String, Object> data = wxPayUtility.fromJson(plaintext, Map.class);
+            String order_no = (String) data.get("out_trade_no");
+            String tradeState = (String) data.get("trade_state");
+            // 真实代码中应该验证订单号和金额等信息，确保回调数据的合法性和安全性
+            if("SUCCESS".equals(tradeState)){
+                // 更新订单支付状态
+                orderService.changeOrderPayStatus(order_no, 1);
+                return Map.of("code", "SUCCESS", "message", "成功");
+            }
+        }catch(Exception e){
+            // 处理异常情况，记录日志等
+            e.printStackTrace();
+            return Map.of("code", "FAIL", "message", "失败");
+        }
+        return Map.of("code", "FAIL", "message", "失败");
+    }
+
+    // 测试接口，模拟微信支付回调
+    @PostMapping("/test/pay/notify")
+    public String postMethodName(@RequestBody Map<String, Object> body) {
+        //TODO: process POST request
+        String order_no = (String) body.get("order_no_test");
+        orderService.changeOrderPayStatus(order_no, 1);
+        return "success";
+    }
+    
+
     // 生成requestNo
     @PostMapping("/member/orders/requestNo")
     public Result generateRequestNo(HttpServletRequest request) {
@@ -96,4 +139,13 @@ public class Orders {
         return result;
     }
     
+    private Headers extractHeaders(HttpServletRequest request) {
+        Headers.Builder builder = new Headers.Builder();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            builder.add(name, request.getHeader(name));
+        }
+        return builder.build();
+    }
 }

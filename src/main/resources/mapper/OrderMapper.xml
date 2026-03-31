@@ -9,6 +9,7 @@
         <id property="order_no" column="order_no"/>
         <id property="total_amount" column="total_amount"/>
         <id property="create_time" column="create_time"/>
+        <id property="pay_status" column="pay_status"/>
         <association property="user" javaType="com.web.flowershopping.Entity.User">
             <id property="user_id" column="user_id"/>
             <id property="nickName" column="nickname"/>
@@ -48,6 +49,7 @@
         select
             om.order_id,
             om.order_no,
+            om.pay_status,
             UM.user_id,
             UM.nickname,
             (
@@ -107,6 +109,7 @@
         select
             om.order_id,
             om.order_no,
+            om.pay_status,
             UM.user_id,
             UM.nickname,
             (
@@ -180,6 +183,7 @@
         select
             om.order_id,
             om.order_no,
+            om.pay_status,
             UM.user_id,
             UM.nickname,
             (
@@ -233,6 +237,12 @@
             </if>
             update_time = now()
         </set>
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="changeOrderPayStatusByOrderId">
+        UPDATE order_master
+        SET pay_status = #{status_id},status_id = #{status_id}, update_time = now()
         WHERE order_id = #{order_id}
     </update>
 

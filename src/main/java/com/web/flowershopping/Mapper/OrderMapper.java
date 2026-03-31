@@ -25,6 +25,11 @@ public interface OrderMapper {
         @Param("order_id") Integer order_id
     );
 
+    public void changeOrderPayStatusByOrderId(
+        @Param("order_id") Integer order_id,
+        @Param("status_id") Integer status_id
+    );
+
     public Map<String, Object> selectStock(
         @Param("product_id") Integer product_id
     );

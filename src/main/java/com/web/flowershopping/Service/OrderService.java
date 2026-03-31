@@ -14,6 +14,8 @@ public interface OrderService {
 
     public Result changeOrderStatus(Integer status_id,Integer order_id);
 
+    public Result changeOrderPayStatus(String order_no, Integer status_id);
+
     public Result createOrder(List<OrderItem> product_info_array, Integer delivery_type_id, Integer delivery_address_id,LocalDateTime delivery_date,Integer user_id, Integer total_amount, String requestNo);
 
     // 支付

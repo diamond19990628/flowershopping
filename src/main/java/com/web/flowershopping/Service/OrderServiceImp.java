@@ -199,4 +199,18 @@ public class OrderServiceImp implements OrderService{
         result.setData(paymentResult);
         return result;
     }
+
+    public Result changeOrderPayStatus(String order_no, Integer status_id){
+        Order order = orderMapper.selectOrderByOrderNo(order_no,null);
+        if(order == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单不存在");
+        }
+        if(order.getPay_status() != 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单状态不合法，无法更新支付状态");
+        }
+        orderMapper.changeOrderPayStatusByOrderId(order.getOrder_id(), 1);
+        Result result = new Result();
+        result.setStatus(200);
+        return result;
+    }
 }
