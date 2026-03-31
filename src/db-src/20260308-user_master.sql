@@ -6,11 +6,4 @@ CREATE TABLE USER_MASTER(
     birthday DATETIME,
     tel varchar(13),
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP comment '创建时间'
-)
-
-select * from `USER_MASTER`
-UPDATE USER_MASTER 
-SET birthday = '1995-03-12', tel = '13845218763'
-WHERE user_id = 11;
-
-select * from order_master
+);
