@@ -215,9 +215,9 @@ public class OrderServiceImp implements OrderService{
     }
 
     @Override
-    public Result selectOrderByUserId(Integer user_id, Integer status_id) {
+    public Result selectOrderByUserId(Integer user_id, Integer status_id, String order_no) {
         // TODO Auto-generated method stub
-        List<Order> orderInfoResult = orderMapper.selectOrderByUserId(user_id, status_id);
+        List<Order> orderInfoResult = orderMapper.selectOrderByUserId(user_id, status_id, order_no);
         for(Order order : orderInfoResult){
             for(OrderItem orderItem : order.getOrder_items()){
                 // 图片置换

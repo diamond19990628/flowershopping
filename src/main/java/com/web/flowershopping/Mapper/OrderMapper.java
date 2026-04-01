@@ -22,7 +22,8 @@ public interface OrderMapper {
 
     public List<Order> selectOrderByUserId(
         @Param("user_id") Integer user_id,
-        @Param("status_id") Integer status_id
+        @Param("status_id") Integer status_id,
+        @Param("order_no") String order_no
     );
 
     public void changeOrderStatus(

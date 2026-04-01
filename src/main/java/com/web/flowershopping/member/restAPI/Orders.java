@@ -71,10 +71,10 @@ public class Orders {
 
     // 获取订单列表
     @GetMapping("/member/orders/{user_id}")
-    public Result getMethodName(HttpServletRequest request, @PathVariable("user_id") Integer user_id,@RequestParam(value = "status_id", defaultValue = "0") Integer status_id) {
+    public Result getMethodName(HttpServletRequest request, @PathVariable("user_id") Integer user_id,@RequestParam(value = "status_id", defaultValue = "0") Integer status_id,@RequestParam(value = "order_no", defaultValue = "") String order_no) {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
-        Result result = orderService.selectOrderByUserId(user_id, status_id);
+        Result result = orderService.selectOrderByUserId(user_id, status_id, order_no);
         return result;
     }
 

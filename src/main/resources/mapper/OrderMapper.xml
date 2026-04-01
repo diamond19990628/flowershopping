@@ -158,6 +158,9 @@
              <if test="status_id != null">
                 AND om.status_id = #{status_id}
              </if>
+            <if test="order_no != null and order_no != ''">
+                AND om.order_no = #{order_no}
+            </if>
         </where>
     </select>
 

@@ -12,7 +12,7 @@ import com.web.flowershopping.Entity.Result;
 public interface OrderService {
     public Result selectAllOrder(String searchString,Integer status_id,boolean is_today_order);
 
-    public Result selectOrderByUserId(Integer user_id, Integer status_id);
+    public Result selectOrderByUserId(Integer user_id, Integer status_id, String order_no);
 
     public Result changeOrderStatus(Integer status_id,Integer order_id);
 
