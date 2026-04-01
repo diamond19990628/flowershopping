@@ -23,6 +23,8 @@
     <resultMap id="deliveryAddressMap" type="com.web.flowershopping.Entity.DeliveryAddress">
         <result property="delivery_address_id" column="delivery_address_id"/>
         <result property="delivery_address" column="delivery_address"/>
+        <result property="receive_name" column="receive_name"/>
+        <result property="receive_tel" column="receive_tel"/>
     </resultMap>
 
     <select id="selectCartItemsByUserId" parameterType="int" resultMap="cartItemMap">

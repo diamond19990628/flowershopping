@@ -29,4 +29,14 @@
 
     </insert>
 
+    <!-- 创建收货地址 -->
+    <insert id="createDeliveryAddress" keyProperty="delivery_address_id" useGeneratedKeys="true">
+        insert into delivery_address_master(user_id, delivery_address,receive_name,receive_tel,create_time,update_time)
+        values (#{deliveryAddress.user_id}, #{deliveryAddress.delivery_address}, #{deliveryAddress.receive_name}, #{deliveryAddress.receive_tel}, NOW(), NOW())
+    </insert>
+
+    <delete id="deleteDeliveryAddress">
+        delete from delivery_address_master where delivery_address_id = #{delivery_address_id}
+    </delete>
+
 </mapper>
