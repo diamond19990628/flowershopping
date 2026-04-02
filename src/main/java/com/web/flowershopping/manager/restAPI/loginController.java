@@ -42,6 +42,7 @@ public class loginController {
                 String token = UUID.randomUUID().toString();
                 session.setAttribute("user_id", result.getData());
                 session.setAttribute("token", token);
+                System.out.println("生成的token: " + token); // 👉 添加日志输出，帮助调试
                 result.setToken(token);
             }
             return result;
