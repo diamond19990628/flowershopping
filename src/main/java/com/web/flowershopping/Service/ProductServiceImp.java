@@ -78,7 +78,7 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Transactional
-    public Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file){
+    public Result createProduct(String product_name,Integer amount,Integer stock,Integer category,MultipartFile file,String requestNo){
         
         File dir = new File(upload_path);
         if(!dir.exists()){
@@ -91,6 +91,11 @@ public class ProductServiceImp implements ProductService{
             file.transferTo(dest);
         } catch (IOException e) {
             throw new CreateException("文件上传失败");
+        }
+        //查询requestNo，验证幂等性
+        Product requestNoResult = productmapper.selectProductWithRequestNo(requestNo);
+        if(requestNoResult != null){
+            throw new CreateException("请勿重复提交");
         }
         Product productCreateDTO = new Product();
         AttachedFIlePhoto attachedFilePhoto = new AttachedFIlePhoto();

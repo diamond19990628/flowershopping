@@ -17,6 +17,8 @@ public interface ProductMapper {
         @Param("Low_Stock") boolean Low_Stock
     );
 
+    Product selectProductWithRequestNo(@Param("requestNo") String requestNo);
+
     List<Product> selectProductWithCategoryID(
         @Param("category_id") Integer category_id,
         @Param("access_flag") int access_flag

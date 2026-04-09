@@ -60,12 +60,14 @@ public class indexController {
                                 @RequestParam("amount") Integer amount,
                                 @RequestParam("stock") Integer stock,
                                 @RequestParam("category") Integer category_id,
-                                @RequestParam("attached_file") MultipartFile attached_file
+                                @RequestParam("attached_file") MultipartFile attached_file,
+                                @RequestParam("requestNo") String requestNo
                                 ) {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
+        System.out.println(requestNo);
         Result result = new Result();
-        result = productservice.createProduct(productName,amount,stock,category_id,attached_file);
+        result = productservice.createProduct(productName,amount,stock,category_id,attached_file,requestNo);
         return result;
     }
     
