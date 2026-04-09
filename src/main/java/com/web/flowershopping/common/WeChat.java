@@ -58,21 +58,18 @@ public class WeChat {
 
     // 获取access_token的方法，微信服务器返回的access_token有一定的有效期，过期后需要重新获取
     public String getAccessToken(){
-        if(accessToken != null && System.currentTimeMillis() < expireTime){
-            return accessToken;
-        }else{
-            String url = "https://api.weixin.qq.com/cgi-bin/token"
-                + "?grant_type=client_credential"
-                + "&appid=" + appid
-                + "&secret=" + secret;
-            RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.getForObject(url, String.class);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(result);
+        String url = "https://api.weixin.qq.com/cgi-bin/token"
+            + "?grant_type=client_credential"
+            + "&appid=" + appid
+            + "&secret=" + secret;
+        System.out.println(appid);
+        System.out.println(secret);
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(url, String.class);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(result);
 
-            accessToken = jsonNode.get("access_token").asText();
-            expireTime = System.currentTimeMillis() + jsonNode.get("expires_in").asLong() * 1000;
-            return accessToken;
-        }
+        accessToken = jsonNode.get("access_token").asText();
+        return accessToken;
     }
 }
