@@ -15,8 +15,10 @@ import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Service.UserLoginService;
 import com.web.flowershopping.common.WeChat;
+import com.web.flowershopping.common.sessions;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -62,4 +64,14 @@ public class loginController {
         }
     }
     
+    // 登录状态验证
+    @PostMapping("/login/verify")
+    public Result verifyLogin(HttpServletRequest request,HttpSession session) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(session.getAttribute("user_id"));
+        return result;
+    }
 }
