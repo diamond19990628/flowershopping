@@ -1,7 +1,10 @@
 package com.web.flowershopping.Service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -84,19 +87,33 @@ public class ProductServiceImp implements ProductService{
         if(!dir.exists()){
             dir.mkdirs();
         }
+        System.out.println("开始文件上传");
         // 文件上传
         String filename = file.getOriginalFilename();
         File dest = new File(upload_path + filename);
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            throw new CreateException("文件上传失败");
+        System.out.println("upload_path = " + upload_path);
+        System.out.println("filename = " + filename);
+        
+        try (InputStream in = file.getInputStream();
+            OutputStream out = new FileOutputStream(dest)) {
+            System.out.println("F: 准备开始流写入");
+            byte[] buffer = new byte[8192];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+            out.flush();
+            System.out.println("G: 文件流写入完成");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CreateException("文件上传失败: " + e.getMessage());
         }
         //查询requestNo，验证幂等性
         Product requestNoResult = productmapper.selectProductWithRequestNo(requestNo);
         if(requestNoResult != null){
             throw new CreateException("请勿重复提交");
         }
+        System.out.println("执行了创建");
         Product productCreateDTO = new Product();
         AttachedFIlePhoto attachedFilePhoto = new AttachedFIlePhoto();
         attachedFilePhoto.setAttachedFilePath(upload_path+filename);
@@ -111,6 +128,7 @@ public class ProductServiceImp implements ProductService{
         productCreateDTO.setAmount(amount);
         // 商品创建
         productmapper.createProduct(productCreateDTO);
+        System.out.println("数据库写入完成");
         int product_id = productCreateDTO.getProductId();
         // 存储库存
         Product createProductCategoryDTO = new Product();
