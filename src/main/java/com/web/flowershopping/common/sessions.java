@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 public class sessions {
     public static void auth_session(HttpServletRequest request,String token){
         HttpSession session = request.getSession(false);
-        if(session.getAttribute("user_id") == null){
+        if(session==null || session.getAttribute("user_id") == null){
             throw new LoginException("未登录或session已失效");
         }else if(!session.getAttribute("token").equals(token)){
             throw new TokenException("Token失效");
