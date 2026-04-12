@@ -14,7 +14,13 @@ public interface UserLoginMapper {
 
     void insertUser(User user);
 
+    DeliveryAddress selectDeliveryAddressById(@Param("delivery_address_id") Integer delivery_address_id);
+
     int createDeliveryAddress(
+        @Param("deliveryAddress") DeliveryAddress deliveryAddress
+    );
+
+    int updateDeliveryAddress(
         @Param("deliveryAddress") DeliveryAddress deliveryAddress
     );
 

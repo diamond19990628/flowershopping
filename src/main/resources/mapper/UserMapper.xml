@@ -12,6 +12,14 @@
         <result property="tel" column="tel"/>
     </resultMap>
 
+    <resultMap id="DeliveryAddressMap" type="com.web.flowershopping.Entity.DeliveryAddress">
+        <id property="delivery_address_id" column="delivery_address_id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="delivery_address" column="delivery_address"/>
+        <result property="receive_name" column="receive_name"/>
+        <result property="receive_tel" column="receive_tel"/>
+    </resultMap>
+
     <select id="selectByOpenId" parameterType="com.web.flowershopping.Entity.User" resultMap="UserMap">
         select * from `USER_MASTER` where openid = #{openid}
     </select>
@@ -29,11 +37,23 @@
 
     </insert>
 
+    <!-- 根据ID查询收货地址 -->
+    <select id="selectDeliveryAddressById" resultMap="DeliveryAddressMap">
+        select delivery_address_id,user_id,delivery_address,receive_name,receive_tel from delivery_address_master where delivery_address_id = #{delivery_address_id}
+    </select>
+
     <!-- 创建收货地址 -->
     <insert id="createDeliveryAddress" keyProperty="delivery_address_id" useGeneratedKeys="true">
         insert into delivery_address_master(user_id, delivery_address,receive_name,receive_tel,create_time,update_time)
         values (#{deliveryAddress.user_id}, #{deliveryAddress.delivery_address}, #{deliveryAddress.receive_name}, #{deliveryAddress.receive_tel}, NOW(), NOW())
     </insert>
+
+    <!-- 更新收货地址 -->
+    <update id="updateDeliveryAddress">
+        update delivery_address_master
+        set delivery_address = #{deliveryAddress.delivery_address}, receive_name = #{deliveryAddress.receive_name}, receive_tel = #{deliveryAddress.receive_tel}, update_time = NOW()
+        where delivery_address_id = #{deliveryAddress.delivery_address_id}
+    </update>
 
     <delete id="deleteDeliveryAddress">
         delete from delivery_address_master where delivery_address_id = #{delivery_address_id}
