@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.wechat.pay.java.core.Config;
+import com.wechat.pay.java.core.RSAPublicKeyConfig;
+import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
+
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 @Service
@@ -13,6 +17,18 @@ public class WeChat {
     private String appid;
     @Value("${wechat.secret}")
     private String secret;
+    @Value("${wechat.MerchantId}")
+    private String MerchantId;
+    @Value("${wechat.privateKeyPath}")
+    private String privateKeyPath;
+    @Value("${wechat.merchantSerialNumber}")
+    private String merchantSerialNumber;
+    @Value("${wechat.apiV3Key}")
+    private String apiV3Key;
+    @Value("${wechat.pubKeyPath}")
+    private String publicKeyPath;
+    @Value("${wechat.pubKeyID}")
+    private String publicKeyId;
 
     //accessToken和expireTime可以用来缓存access_token，避免频繁请求微信服务器
     private String accessToken;
@@ -72,4 +88,23 @@ public class WeChat {
         accessToken = jsonNode.get("access_token").asText();
         return accessToken;
     }
+
+    // 通过密钥拉起微信支付界面
+public JsapiServiceExtension prepayWithRequestPayment(String orderNo, Integer totalAmount, String openId) {
+    Config config = new RSAPublicKeyConfig.Builder()
+            .merchantId(MerchantId)
+            .privateKeyFromPath(privateKeyPath)
+            .merchantSerialNumber(merchantSerialNumber)
+            .apiV3Key(apiV3Key)
+            .publicKeyId(publicKeyId)
+            .publicKeyFromPath(publicKeyPath)
+            .build();
+
+    JsapiServiceExtension jsapiServiceExtension = new JsapiServiceExtension.Builder()
+            .config(config)
+            .signType("RSA")
+            .build();
+
+    return jsapiServiceExtension;
+}
 }

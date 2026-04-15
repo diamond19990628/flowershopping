@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,13 @@ import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
 import com.web.flowershopping.common.RabbitMQService;
+import com.web.flowershopping.common.WeChat;
 import com.web.flowershopping.common.getImagePath;
+import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
+import com.wechat.pay.java.service.payments.jsapi.model.Amount;
+import com.wechat.pay.java.service.payments.jsapi.model.Payer;
+import com.wechat.pay.java.service.payments.jsapi.model.PrepayRequest;
+import com.wechat.pay.java.service.payments.jsapi.model.PrepayWithRequestPaymentResponse;
 
 import jakarta.annotation.Resource;
 
@@ -37,6 +45,12 @@ public class OrderServiceImp implements OrderService{
     getImagePath getImagePath;
     @Resource
     RabbitMQService rabbitMQService;
+    @Autowired
+    WeChat getwechatopenid;
+    @Value("${wechat.appid}")
+    private String appid;
+    @Value("${wechat.MerchantId}")
+    private String MerchantId;
 
     private static final ConcurrentHashMap sessionStore = new ConcurrentHashMap<>();
 
@@ -187,13 +201,31 @@ public class OrderServiceImp implements OrderService{
         if(order.getStatus().getStatusId() != 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单状态不合法，无法支付");
         }
+        JsapiServiceExtension jsapiServiceExtension = getwechatopenid.prepayWithRequestPayment(order_no, total_amount, openId);
+        PrepayRequest prepayRequest = new PrepayRequest();
+        prepayRequest.setAppid(appid);
+        prepayRequest.setMchid(MerchantId);
+        prepayRequest.setDescription("订单支付");
+        prepayRequest.setOutTradeNo(order_no);
+        prepayRequest.setNotifyUrl("https://api.tshyshopping.cn/pay/notify");
+        Amount amount = new Amount();
+        amount.setTotal(total_amount*100);
+        prepayRequest.setAmount(amount);
+
+        Payer payer = new Payer();
+        payer.setOpenid(openId);
+        prepayRequest.setPayer(payer);
+
+        PrepayWithRequestPaymentResponse prepayResponse = jsapiServiceExtension.prepayWithRequestPayment(prepayRequest);
+        
         // 调用支付接口（暂时没有接口，所以先这样）
         Map<String, Object> paymentResult = new HashMap<>();
-        paymentResult.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
-        paymentResult.put("nonceStr", "随机字符串");
-        paymentResult.put("package", "prepay_id=预支付交易会话标识");
-        paymentResult.put("signType", "MD5");
-        paymentResult.put("paySign", "签名");
+        paymentResult.put("appId", prepayResponse.getAppId());
+        paymentResult.put("timeStamp", prepayResponse.getTimeStamp());
+        paymentResult.put("nonceStr", prepayResponse.getNonceStr());
+        paymentResult.put("package", prepayResponse.getPackageVal());
+        paymentResult.put("signType", prepayResponse.getSignType());
+        paymentResult.put("paySign", prepayResponse.getPaySign());
         Result result = new Result();
         result.setStatus(200);
         result.setData(paymentResult);
