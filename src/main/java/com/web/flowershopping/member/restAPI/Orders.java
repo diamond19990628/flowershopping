@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,13 @@ import okhttp3.Headers;
 
 @RestController
 public class Orders {
+    @Value ("${wechatpay.apiV3Key}")
+    private String apiV3Key;
+    @Value ("${wechatpay.wechatpayPublicKey}")
+    private String wechatpayPublicKey;
+    @Value ("${wechatpay.wechatpayPublicKeyPath}")
+    private String wechatpayPublicKeyPath;
+
     @Resource
     OrderService orderService;
     @PostMapping("/member/orders")
@@ -118,10 +126,10 @@ public class Orders {
                                   HttpServletRequest request) {
         try{
             Headers headers = extractHeaders(request);
-            String apiV3Key = "testkey";
-            String wechatpayPublicKey = "test2key";
+            String apiV3Key = (String) this.apiV3Key;
+            String wechatpayPublicKey = (String) this.wechatpayPublicKey;
             WXPayUtility wxPayUtility = new WXPayUtility();
-            PublicKey wechatpayPublicKeyObj = wxPayUtility.loadPublicKeyFromPath("classpath:certs/wechatpay_public_key.pem");
+            PublicKey wechatpayPublicKeyObj = wxPayUtility.loadPublicKeyFromPath(wechatpayPublicKeyPath);
             WXPayUtility.Notification notification = wxPayUtility.parseNotification(apiV3Key, wechatpayPublicKey, wechatpayPublicKeyObj, headers, body);
             String plaintext = notification.getPlaintext();
             Map<String, Object> data = wxPayUtility.fromJson(plaintext, Map.class);
