@@ -37,11 +37,11 @@ import okhttp3.Headers;
 
 @RestController
 public class Orders {
-    @Value ("${wechatpay.apiV3Key}")
+    @Value ("${wechat.apiV3Key}")
     private String apiV3Key;
-    @Value ("${wechatpay.wechatpayPublicKey}")
+    @Value ("${wechat.pubKeyID}")
     private String wechatpayPublicKey;
-    @Value ("${wechatpay.wechatpayPublicKeyPath}")
+    @Value ("${wechat.pubKeyPath}")
     private String wechatpayPublicKeyPath;
 
     @Resource
