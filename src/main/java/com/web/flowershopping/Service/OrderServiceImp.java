@@ -23,9 +23,12 @@ import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Entity.deliveryType;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
+import com.web.flowershopping.Mapper.UserLoginMapper;
+import com.web.flowershopping.common.GaoDe;
 import com.web.flowershopping.common.RabbitMQService;
 import com.web.flowershopping.common.WeChat;
 import com.web.flowershopping.common.getImagePath;
+import com.web.flowershopping.common.Exception.ParamException;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
 import com.wechat.pay.java.service.payments.jsapi.model.Amount;
 import com.wechat.pay.java.service.payments.jsapi.model.Payer;
@@ -38,7 +41,10 @@ import jakarta.annotation.Resource;
 public class OrderServiceImp implements OrderService{
     @Resource
     OrderMapper orderMapper;
-
+    @Resource
+    UserLoginMapper userLoginMapper;
+    @Resource
+    GaoDe gaoDe;
     @Resource
     ShoppingCartMapper shoppingCartMapper;
     @Resource
@@ -291,6 +297,22 @@ public class OrderServiceImp implements OrderService{
         Result result = new Result();
         result.setStatus(200);
         result.setData(updatedOrder);
+        return result;
+    }
+
+    @Override
+    public Result getDeliveryInfoByGaoDe(Integer delivery_address_id) {
+        // TODO Auto-generated method stub
+        // 根据delivery_address_id获取地址信息
+        DeliveryAddress deliveryAddress = userLoginMapper.selectDeliveryAddressById(delivery_address_id);
+        if(deliveryAddress == null){
+            throw new ParamException("配送地址不存在");
+        }
+        String address = deliveryAddress.getDelivery_address();
+        Map<String, Integer> deliveryInfo = gaoDe.getAddress(address);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(deliveryInfo);
         return result;
     }
 }

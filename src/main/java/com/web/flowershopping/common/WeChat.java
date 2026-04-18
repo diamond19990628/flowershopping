@@ -78,8 +78,6 @@ public class WeChat {
             + "?grant_type=client_credential"
             + "&appid=" + appid
             + "&secret=" + secret;
-        System.out.println(appid);
-        System.out.println(secret);
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(url, String.class);
         ObjectMapper mapper = new ObjectMapper();
@@ -104,6 +102,7 @@ public JsapiServiceExtension prepayWithRequestPayment(String orderNo, Integer to
             .config(config)
             .signType("RSA")
             .build();
+    
 
     return jsapiServiceExtension;
 }

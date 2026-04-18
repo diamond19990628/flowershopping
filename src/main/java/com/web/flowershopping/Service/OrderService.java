@@ -24,4 +24,7 @@ public interface OrderService {
 
     // 支付
     public Result pay(String order_no, Integer total_amount, String openId);
+
+    // 通过高德地图获取配送距离和时间
+    public Result getDeliveryInfoByGaoDe(Integer delivery_address_id);
 }

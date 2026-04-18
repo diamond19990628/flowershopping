@@ -171,6 +171,16 @@ public class Orders {
         result.setData(requestNo);
         return result;
     }
+
+    // 通过高德地图API获取配送距离和预计配送时间
+    @GetMapping("/member/shippingfee")
+    public Result getMethodName(HttpServletRequest request,@RequestParam("delivery_address_id") Integer delivery_address_id) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = orderService.getDeliveryInfoByGaoDe(delivery_address_id);
+        return result;
+    }
+    
     
     private Headers extractHeaders(HttpServletRequest request) {
         Headers.Builder builder = new Headers.Builder();
