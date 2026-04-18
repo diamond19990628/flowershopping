@@ -108,7 +108,7 @@
                 AND om.create_time &lt; CURDATE() + INTERVAL 1 DAY
             </if>
         </where>
-        order by om.delivery_date desc
+        order by om.delivery_date
     </select>
 
     <select id="selectOrderByUserId" resultMap="OrderMap">
