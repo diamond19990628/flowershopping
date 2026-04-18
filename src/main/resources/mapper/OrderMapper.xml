@@ -94,6 +94,9 @@
             <if test="User.nickName != null">
                 AND nickname LIKE CONCAT('%', #{User.nickName}, '%')
             </if>
+            <if test="Order.order_no != null and Order.order_no != ''">
+                AND om.order_no = #{Order.order_no}
+            </if>
             <if test="Status.status_id != 0">
                 AND om.status_id = #{Status.status_id}
             </if>

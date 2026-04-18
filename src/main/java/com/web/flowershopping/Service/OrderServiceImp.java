@@ -64,7 +64,7 @@ public class OrderServiceImp implements OrderService{
 
     @Override
     public Result selectAllOrder(String searchString,Integer status_id,boolean is_today_order) {
-        String order_no_res = "^\\d{4}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])([01]\\d|2[0-3])[0-5]\\d[0-5]\\d$";
+        String order_no_res = "^\\d{18}$";
         User user = new User();
         Order order =  new Order();
         if(searchString != null){
