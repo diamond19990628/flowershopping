@@ -128,10 +128,11 @@ public JsapiServiceExtension prepayWithRequestPayment(String orderNo, Integer to
         CreateRequest request = new CreateRequest();
         request.setOutTradeNo(trade_no);
         request.setOutRefundNo(refund_no);
-        request.setNotifyUrl("/refund/notify");
+        request.setNotifyUrl("https://api.tshyshopping.cn/refund/notify");
         AmountReq amount = new AmountReq();
-        amount.setRefund((long) (refundAmount*100));
-        amount.setTotal((long) (refundAmount*100));
+        amount.setRefund((long) (refundAmount));
+        amount.setTotal((long) (refundAmount));
+        amount.setCurrency("CNY");
         request.setAmount(amount);
         refundService.create(request);
     }

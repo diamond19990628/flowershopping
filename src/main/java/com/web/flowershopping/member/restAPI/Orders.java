@@ -142,13 +142,15 @@ public class Orders {
             Map<String, Object> data = wxPayUtility.fromJson(plaintext, Map.class);
             String order_no = (String) data.get("out_trade_no");
             String tradeState = (String) data.get("trade_state");
+            Map<String, Object> amountMap = (Map<String, Object>) data.get("amount");
+            Integer amount = ((Number) amountMap.get("total")).intValue();
             // 真实代码中应该验证订单号和金额等信息，确保回调数据的合法性和安全性
             if("SUCCESS".equals(tradeState)){
                 // 验证订单是否存在
                 Order order = orderMapper.selectOrderByOrderNo(order_no, null);
                 if (order == null) {
                     String refund_no = UUID.randomUUID().toString()+data.get("out_trade_no");
-                    wechat.refundWithRequestRefund(order_no, refund_no, (Integer) data.get("amount"));
+                    wechat.refundWithRequestRefund(order_no, refund_no, amount);
                     return Map.of("code", "SUCCESS", "发起退款", "成功");
                 }else{
                     // 更新订单支付状态
@@ -187,12 +189,13 @@ public class Orders {
             String plaintext = notification.getPlaintext();
             Map<String, Object> data = wxPayUtility.fromJson(plaintext, Map.class);
             String order_no = (String) data.get("out_trade_no");
-            String tradeState = (String) data.get("trade_state");
+            String tradeState = (String) data.get("refund_status");
+            String outRefundNo = (String) data.get("out_refund_no");
             if("SUCCESS".equals(tradeState)){
                 // 删除目标订单
                 orderMapper.deleteOrderByOrderNo(order_no);
                 // 将该订单信息存入退款记录表，供管理员查询和统计等使用
-                orderMapper.createRefundRecord(tradeState, order_no, 1);
+                orderMapper.createRefundRecord(outRefundNo, order_no, 1);
                 return Map.of("code", "SUCCESS", "message", "成功");
             }
         }catch(Exception e){
@@ -203,7 +206,14 @@ public class Orders {
         return Map.of("code", "FAIL", "message", "失败");
     }
     
-    
+    @PostMapping("/test/refund/notify")
+    public String test(@RequestBody Map<String, Object> body) {
+        String order_no = (String) body.get("order_no");
+        orderMapper.deleteOrderByOrderNo(order_no);
+        // 将该订单信息存入退款记录表，供管理员查询和统计等使用
+        orderMapper.createRefundRecord("testtesttest", order_no, 1);
+        return "success";
+    }
 
     // 生成requestNo
     @PostMapping("/member/orders/requestNo")
