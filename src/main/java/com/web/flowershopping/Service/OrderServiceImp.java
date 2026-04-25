@@ -192,7 +192,7 @@ public class OrderServiceImp implements OrderService{
         return result;
     }
 
-    // 支付接口，暂时不实装，后续根据具体支付方式和流程进行设计
+    // 支付接口
     @Override
     public Result pay(String order_no, Integer total_amount, String openId) {
         // 乐观锁查询订单信息，确认订单状态和金额

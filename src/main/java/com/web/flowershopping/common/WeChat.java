@@ -8,6 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.wechat.pay.java.core.Config;
 import com.wechat.pay.java.core.RSAPublicKeyConfig;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
+import com.wechat.pay.java.service.refund.RefundService;
+import com.wechat.pay.java.service.refund.model.AmountReq;
+import com.wechat.pay.java.service.refund.model.CreateRequest;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -106,4 +109,30 @@ public JsapiServiceExtension prepayWithRequestPayment(String orderNo, Integer to
 
     return jsapiServiceExtension;
 }
+
+    // 通过密钥拉起微信退款界面
+    public void refundWithRequestRefund(String trade_no, String refund_no, Integer refundAmount) {
+        Config config = new RSAPublicKeyConfig.Builder()
+                .merchantId(MerchantId)
+                .privateKeyFromPath(privateKeyPath)
+                .merchantSerialNumber(merchantSerialNumber)
+                .apiV3Key(apiV3Key)
+                .publicKeyId(publicKeyId)
+                .publicKeyFromPath(publicKeyPath)
+                .build();
+
+        // 退款逻辑，调用微信退款接口
+        RefundService refundService = new RefundService.Builder()
+                .config(config)
+                .build();
+        CreateRequest request = new CreateRequest();
+        request.setOutTradeNo(trade_no);
+        request.setOutRefundNo(refund_no);
+        request.setNotifyUrl("/refund/notify");
+        AmountReq amount = new AmountReq();
+        amount.setRefund((long) (refundAmount*100));
+        amount.setTotal((long) (refundAmount*100));
+        request.setAmount(amount);
+        refundService.create(request);
+    }
 }

@@ -19,12 +19,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.flowershopping.Entity.Card;
+import com.web.flowershopping.Entity.Order;
 import com.web.flowershopping.Entity.OrderItem;
 import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.User;
+import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Service.OrderService;
 import com.web.flowershopping.common.WXPayUtility;
+import com.web.flowershopping.common.WeChat;
 import com.web.flowershopping.common.sessions;
 import com.web.flowershopping.common.Exception.ParamException;
 
@@ -46,6 +49,10 @@ public class Orders {
 
     @Resource
     OrderService orderService;
+    @Resource
+    OrderMapper orderMapper;
+    @Resource
+    WeChat wechat;
     @PostMapping("/member/orders")
     public Result createOrder(HttpServletRequest request, @RequestBody Map<String, Object> Requestdata) {
         //TODO: process POST request
@@ -137,9 +144,17 @@ public class Orders {
             String tradeState = (String) data.get("trade_state");
             // 真实代码中应该验证订单号和金额等信息，确保回调数据的合法性和安全性
             if("SUCCESS".equals(tradeState)){
-                // 更新订单支付状态
-                orderService.changeOrderPayStatus(order_no, 1);
-                return Map.of("code", "SUCCESS", "message", "成功");
+                // 验证订单是否存在
+                Order order = orderMapper.selectOrderByOrderNo(order_no, null);
+                if (order == null) {
+                    String refund_no = UUID.randomUUID().toString()+data.get("out_trade_no");
+                    wechat.refundWithRequestRefund(order_no, refund_no, (Integer) data.get("amount"));
+                    return Map.of("code", "SUCCESS", "发起退款", "成功");
+                }else{
+                    // 更新订单支付状态
+                    orderService.changeOrderPayStatus(order_no, 1);
+                    return Map.of("code", "SUCCESS", "message", "成功");
+                }
             }
         }catch(Exception e){
             // 处理异常情况，记录日志等
@@ -157,6 +172,37 @@ public class Orders {
         orderService.changeOrderPayStatus(order_no, 1);
         return "success";
     }
+
+    @PostMapping("/refund/notify")
+    public Map<String, String> postMethodName(@RequestBody String body,
+                                  HttpServletRequest request) {
+        //TODO: process POST request
+        try{
+            Headers headers = extractHeaders(request);
+            String apiV3Key = (String) this.apiV3Key;
+            String wechatpayPublicKey = (String) this.wechatpayPublicKey;
+            WXPayUtility wxPayUtility = new WXPayUtility();
+            PublicKey wechatpayPublicKeyObj = wxPayUtility.loadPublicKeyFromPath(wechatpayPublicKeyPath);
+            WXPayUtility.Notification notification = wxPayUtility.parseNotification(apiV3Key, wechatpayPublicKey, wechatpayPublicKeyObj, headers, body);
+            String plaintext = notification.getPlaintext();
+            Map<String, Object> data = wxPayUtility.fromJson(plaintext, Map.class);
+            String order_no = (String) data.get("out_trade_no");
+            String tradeState = (String) data.get("trade_state");
+            if("SUCCESS".equals(tradeState)){
+                // 删除目标订单
+                orderMapper.deleteOrderByOrderNo(order_no);
+                // 将该订单信息存入退款记录表，供管理员查询和统计等使用
+                orderMapper.createRefundRecord(tradeState, order_no, 1);
+                return Map.of("code", "SUCCESS", "message", "成功");
+            }
+        }catch(Exception e){
+            // 处理异常情况，记录日志等
+            e.printStackTrace();
+            return Map.of("code", "FAIL", "message", "失败");
+        }
+        return Map.of("code", "FAIL", "message", "失败");
+    }
+    
     
 
     // 生成requestNo

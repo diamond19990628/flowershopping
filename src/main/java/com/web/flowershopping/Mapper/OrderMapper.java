@@ -94,4 +94,10 @@ public interface OrderMapper {
     public int deleteOrderItemsByOrderId(
         @Param("order_id") Integer order_id
     );
+
+    public int createRefundRecord(
+        @Param("out_refund_no") String out_refund_no,
+        @Param("order_no") String order_no,
+        @Param("status") Integer status
+    );
 }
