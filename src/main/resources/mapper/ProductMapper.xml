@@ -306,4 +306,14 @@
         DELETE FROM product_master
         WHERE product_id = #{product_id}
     </delete>
+
+    <delete id="deleteProductCategory">
+        DELETE FROM product_category
+        WHERE product_id = #{product_id}
+    </delete>
+
+    <delete id="deleteProductStock">
+        DELETE FROM stock_master
+        WHERE product_id = #{product_id}
+    </delete>
 </mapper>

@@ -65,4 +65,8 @@ public interface ProductMapper {
     List<Card> selectAllCard();
 
     void deleteProduct(@Param("product_id") Integer product_id);
+
+    void deleteProductCategory(@Param("product_id") Integer product_id);
+
+    void deleteProductStock(@Param("product_id") Integer product_id);
 }
