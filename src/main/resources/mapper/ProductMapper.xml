@@ -301,4 +301,9 @@
     <select id="selectAllCard" resultMap="cardMap">
         SELECT * FROM card_master
     </select>
+
+    <delete id="deleteProduct">
+        DELETE FROM product_master
+        WHERE product_id = #{product_id}
+    </delete>
 </mapper>

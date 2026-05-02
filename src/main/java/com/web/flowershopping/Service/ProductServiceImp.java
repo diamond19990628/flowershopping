@@ -285,4 +285,30 @@ public class ProductServiceImp implements ProductService{
         result.setStatus(200);
         return result;
     }
+    @Transactional
+    @Override
+    public Result deleteProductWithID(Integer product_id) {
+        // TODO Auto-generated method stub
+        // 检查现有的情报
+        Product productInfoResult = productmapper.selectProductWithID(product_id);
+        if(productInfoResult==null){
+            throw new ReadException("该产品已经被删除，无法更改");
+        }
+        // 删除真实文件
+        Path filepath = Paths.get(productInfoResult.getAttachedFile().getAttachedFilePath());
+        try{
+            Files.deleteIfExists(filepath);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"删除图片失败");
+        }
+        // 删除图片文件(数据库)
+        AttachedFIlePhoto attachedReadDTO = new AttachedFIlePhoto();
+        attachedReadDTO.setAttachedFileId(productInfoResult.getAttachedFile().getAttachedFileId());
+        attachedReadDTO.setAttachedFilePath(productInfoResult.getAttachedFile().getAttachedFilePath());
+        productmapper.deleteAttachedFile(attachedReadDTO);
+        productmapper.deleteProduct(product_id);
+        Result result = new Result();
+        result.setStatus(204);
+        return result;
+    }
 }

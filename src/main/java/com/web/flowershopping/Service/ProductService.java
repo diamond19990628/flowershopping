@@ -21,4 +21,6 @@ public interface ProductService {
     Result selectMemberAllProduct(Integer category_id,int access_flag);
 
     Result selectAllCard();
+
+    Result deleteProductWithID(Integer product_id);
 }

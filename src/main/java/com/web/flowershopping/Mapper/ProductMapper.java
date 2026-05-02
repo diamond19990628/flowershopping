@@ -63,4 +63,6 @@ public interface ProductMapper {
 
     // 查询所有卡片
     List<Card> selectAllCard();
+
+    void deleteProduct(@Param("product_id") Integer product_id);
 }

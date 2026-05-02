@@ -101,6 +101,18 @@ public class indexController {
 
     }
 
+    // 删除产品
+    @DeleteMapping("/product/{product_id}")
+    public ResponseEntity<Void> deleteProduct(HttpServletRequest request,@PathVariable("product_id")Integer product_id){
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = productservice.deleteProductWithID(product_id);
+        if(result.getStatus()==204){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     // category专属
     @GetMapping("/categories")
     public Result getCategory(HttpServletRequest request) {
