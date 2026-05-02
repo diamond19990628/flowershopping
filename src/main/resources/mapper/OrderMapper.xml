@@ -7,6 +7,7 @@
     <resultMap id="OrderMap" type="com.web.flowershopping.Entity.Order">
         <id property="order_id" column="order_id"/>
         <id property="order_no" column="order_no"/>
+        <id property="is_refunding" column="is_refunding"/>
         <id property="total_amount" column="total_amount"/>
         <id property="create_time" column="create_time"/>
         <id property="delivery_date" column="delivery_date"/>
@@ -52,6 +53,7 @@
             om.order_no,
             om.pay_status,
             om.delivery_date,
+            om.is_refunding,
             UM.user_id,
             UM.nickname,
             (
@@ -379,4 +381,11 @@
         INSERT INTO refund_master (out_refund_no, order_no, status, create_time, update_time)
         VALUES (#{out_refund_no}, #{order_no}, #{status}, now(), now())
      </insert>
+
+     <!-- 更新退款状态 -->
+    <update id="changeRefundStatusByOrderNo">
+        UPDATE order_master
+        SET is_refunding = 1, update_time = now()
+        WHERE order_no = #{order_no}
+    </update>
 </mapper>

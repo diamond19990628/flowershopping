@@ -187,7 +187,12 @@ public class Orders {
         String order_no = (String) body.get("order_no");
         Integer refund_amount = (Integer) body.get("refund_amount");
         String refund_no = UUID.randomUUID().toString()+order_no;
+        
         wechat.refundWithRequestRefund(order_no, refund_no, refund_amount*100);
+        int changeRefundStatusResult = orderMapper.changeRefundStatusByOrderNo(order_no);
+        if(changeRefundStatusResult == 0){
+            throw new RuntimeException("订单状态更新失败，可能订单不存在");
+        }
         Result result = new Result();
         result.setStatus(200);
         result.setMsg("退款请求已发起");

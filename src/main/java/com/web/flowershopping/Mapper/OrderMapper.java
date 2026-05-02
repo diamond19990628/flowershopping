@@ -100,4 +100,8 @@ public interface OrderMapper {
         @Param("order_no") String order_no,
         @Param("status") Integer status
     );
+
+    public int changeRefundStatusByOrderNo(
+        @Param("order_no") String order_no
+    );
 }

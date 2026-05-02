@@ -8,6 +8,7 @@ public class Order {
     private String order_no;
     private User user;
     private int total_amount;
+    private Integer is_refunding;
     private Status status;
     private Integer pay_status;
     private deliveryType deliverytype;
@@ -88,12 +89,19 @@ public class Order {
     public void setPay_status(Integer pay_status) {
         this.pay_status = pay_status;
     }
+    public Integer getIs_refunding() {
+        return is_refunding;
+    }
+    public void setIs_refunding(Integer is_refunding) {
+        this.is_refunding = is_refunding;
+    }
+
     @Override
     public String toString() {
         return "Order [order_id=" + order_id + ", order_no=" + order_no + ", user=" + user + ", total_amount="
                 + total_amount + ", status=" + status + ", pay_status=" + pay_status + ", deliverytype=" + deliverytype
                 + ", deliveryAddress=" + deliveryAddress + ", delivery_date=" + delivery_date + ", create_time="
-                + create_time + ", update_time=" + update_time + ", order_items=" + order_items + "]";
+                + create_time + ", update_time=" + update_time + ", order_items=" + order_items + ", is_refunding=" + is_refunding + "]";
     }
     
 }
