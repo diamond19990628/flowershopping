@@ -217,8 +217,24 @@ public class Orders {
             String tradeState = (String) data.get("refund_status");
             String outRefundNo = (String) data.get("out_refund_no");
             if("SUCCESS".equals(tradeState)){
-                // 删除目标订单
-                orderMapper.deleteOrderByOrderNo(order_no);
+                Order order =orderMapper.selectOrderByOrderNo(order_no,null);
+                System.out.println(order);
+                if(order != null){
+                    Integer order_id = order.getOrder_id();
+                    // 查询订单项详情
+                    List<OrderItem> orderItems = orderMapper.selectOrderItemByOrderId(order_id);
+                    // 恢复库存
+                    for(OrderItem item : orderItems){
+                        Integer product_id = item.getProduct().getProductId();
+                        Integer quantity = item.getQuantity();
+                        Integer version = (Integer)orderMapper.selectStockById(product_id).get("version");
+                        orderMapper.restoreStock(product_id, quantity, version);
+                    }
+                    // 删除订单项
+                    orderMapper.deleteOrderItemsByOrderId(order_id);
+                    // 删除该订单
+                    orderMapper.deleteOrderByOrderNo(order_no);
+                }
                 // 将该订单信息存入退款记录表，供管理员查询和统计等使用
                 orderMapper.createRefundRecord(outRefundNo, order_no, 1);
                 return Map.of("code", "SUCCESS", "message", "成功");
