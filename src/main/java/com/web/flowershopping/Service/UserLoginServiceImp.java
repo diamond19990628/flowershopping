@@ -12,6 +12,7 @@ import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Mapper.UserLoginMapper;
 import com.web.flowershopping.common.WeChat;
+import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
 
@@ -34,10 +35,7 @@ public class UserLoginServiceImp implements UserLoginService{
             result.setData(userInfoResult);
             result.setMsg("success");
         }else{
-            userLoginMapper.insertUser(user);
-            result.setStatus(200);
-            result.setData(user);
-            result.setMsg("新用户创建成功");
+            throw new ParamException("用户不存在");
         }
         return result;
     }
@@ -66,6 +64,20 @@ public class UserLoginServiceImp implements UserLoginService{
         result.setData(entity);
         result.setStatus(200);
         result.setMsg("success");
+        return result;
+    }
+
+    @Override
+    public Result registerNewUser(String openid, String nickname, String phoneNumber) {
+        // TODO Auto-generated method stub
+        User user = new User();
+        user.setOpenid(openid);
+        user.setNickName(nickname);
+        user.setTel(phoneNumber);
+        userLoginMapper.insertUser(user);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(user);
         return result;
     }
 }

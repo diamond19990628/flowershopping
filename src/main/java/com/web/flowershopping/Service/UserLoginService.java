@@ -10,4 +10,6 @@ public interface UserLoginService {
     Result selectByOpenId(User user);
 
     Result selectByPhoneNumber(String code);
+
+    Result registerNewUser(String openid,String nickname,String phoneNumber);
 }

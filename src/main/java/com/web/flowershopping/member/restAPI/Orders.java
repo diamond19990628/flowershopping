@@ -175,6 +175,26 @@ public class Orders {
         return "success";
     }
 
+    // 退款接口
+    @PostMapping("/pay/refund")
+    public Result refund(HttpServletRequest request, @RequestBody Map<String, Object> body) {
+        //TODO: process POST request
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        if(!body.containsKey("order_no") || !body.containsKey("refund_amount")){
+            throw new ParamException("缺少必要字段");
+        }
+        String order_no = (String) body.get("order_no");
+        Integer refund_amount = (Integer) body.get("refund_amount");
+        String refund_no = UUID.randomUUID().toString()+order_no;
+        wechat.refundWithRequestRefund(order_no, refund_no, refund_amount*100);
+        Result result = new Result();
+        result.setStatus(200);
+        result.setMsg("退款请求已发起");
+        return result;
+    }
+    
+    // 微信退款回调接口
     @PostMapping("/refund/notify")
     public Map<String, String> postMethodName(@RequestBody String body,
                                   HttpServletRequest request) {

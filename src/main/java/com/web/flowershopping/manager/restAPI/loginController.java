@@ -16,6 +16,7 @@ import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Service.UserLoginService;
 import com.web.flowershopping.common.WeChat;
 import com.web.flowershopping.common.sessions;
+import com.web.flowershopping.common.Exception.ParamException;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,21 @@ public class loginController {
         }
         
     }
+
+    @PostMapping("/register")
+    public Result postMethodName(@RequestBody Map<String, Object> Requestdata) {
+        //TODO: process POST request
+        if(!Requestdata.containsKey("code") || !Requestdata.containsKey("nickName") || !Requestdata.containsKey("phoneNumber")){
+            throw new ParamException("缺少必要字段");
+        }
+        String code = (String) Requestdata.get("code");
+        String nickname = (String) Requestdata.get("nickName");
+        String phoneNumber = (String) Requestdata.get("phoneNumber");
+        String openid = getwechatopenid.getWechatOpenId(code);
+        Result result = userloginService.registerNewUser(openid, nickname, phoneNumber);
+        return result;
+    }
+    
 
     @PostMapping("/login/phone")
     public Result getPhone(@RequestBody Map<String, Object> Requestdata) {
