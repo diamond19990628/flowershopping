@@ -20,6 +20,10 @@ public interface OrderMapper {
         @Param("is_today_order") boolean isTodayOrder
     );
 
+    public int selectOrderCountByProductId(
+        @Param("product_id") Integer product_id
+    );
+
     public List<Order> selectOrderByUserId(
         @Param("user_id") Integer user_id,
         @Param("status_id") Integer status_id,

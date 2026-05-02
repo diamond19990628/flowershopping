@@ -61,6 +61,10 @@
         SELECT * FROM delivery_address_master WHERE user_id = #{user_id}
     </select>
 
+    <select id="selectProductCountInCartByProductId">
+        SELECT COUNT(*) AS product_count_in_cart FROM shopping_cart WHERE product_id = #{product_id}
+    </select>
+
     <update id="updateCartItemQuantity">
         UPDATE shopping_cart 
             SET quantity = quantity + 1

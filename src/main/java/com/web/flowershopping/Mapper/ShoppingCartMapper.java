@@ -28,5 +28,9 @@ public interface ShoppingCartMapper {
         @Param("product_id") int product_id
     );
 
+    public int selectProductCountInCartByProductId(
+        @Param("product_id") int product_id
+    );
+
     public List<DeliveryAddress> selectDeliveryAddressByUserId(@Param("user_id") Integer user_id);
 }

@@ -25,7 +25,9 @@ import com.web.flowershopping.Entity.Category;
 import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Mapper.CategoryMapper;
+import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ProductMapper;
+import com.web.flowershopping.Mapper.ShoppingCartMapper;
 import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.CreateException;
 import com.web.flowershopping.common.Exception.ReadException;
@@ -42,6 +44,12 @@ public class ProductServiceImp implements ProductService{
 
     @Resource
     getImagePath getimagePath;
+
+    @Resource
+    OrderMapper orderMapper;
+
+    @Resource
+    ShoppingCartMapper shoppingCartMapper;
 
     @Value("${upload.path}")
     String upload_path;
@@ -293,6 +301,15 @@ public class ProductServiceImp implements ProductService{
         Product productInfoResult = productmapper.selectProductWithID(product_id);
         if(productInfoResult==null){
             throw new ReadException("该产品已经被删除，无法更改");
+        }
+        // 查找订单列表中是否有该商品，如果有则无法删除
+        int orderCount = orderMapper.selectOrderCountByProductId(product_id);
+        if (orderCount > 0) {
+            throw new ReadException("该产品已有订单，无法删除");
+        }
+        int cartCount = shoppingCartMapper.selectProductCountInCartByProductId(product_id);
+        if (cartCount > 0) {
+            throw new ReadException("该产品已有用户加入购物车，无法删除");
         }
         // 删除真实文件
         Path filepath = Paths.get(productInfoResult.getAttachedFile().getAttachedFilePath());

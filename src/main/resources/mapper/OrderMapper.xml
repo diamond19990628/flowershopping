@@ -388,4 +388,8 @@
         SET is_refunding = 1, update_time = now()
         WHERE order_no = #{order_no}
     </update>
+
+    <select id="selectOrderCountByProductId" resultType="int">
+        select count(*) AS product_count from order_item where product_id = #{product_id}
+    </select>
 </mapper>
