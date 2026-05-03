@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,13 +98,25 @@ public class Orders {
     // 修改订单状态，主要用于用户取消订单等操作
     @PatchMapping("/member/orders/{order_no}")
     public Result patchOrders(HttpServletRequest request,@PathVariable("order_no")String order_no,@RequestBody Map<String, Object> data){
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Integer status_id = Integer.valueOf(data.get("status_id").toString());
         Result result = orderService.changeOrderStatusByOrderNo(status_id, order_no);
         return result;
     }
     
+    // 删除订单
+    @DeleteMapping("/member/orders/{order_no}")
+    public ResponseEntity deleteOrders(HttpServletRequest request,@PathVariable("order_no")String order_no){
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = orderService.deleteOrderByOrderNo(order_no);
+        if(result.getStatus() == 204){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.status(result.getStatus()).build();
+        }
+    }
 
     // 微信支付
     @PostMapping("/member/orders/wechat-pay")

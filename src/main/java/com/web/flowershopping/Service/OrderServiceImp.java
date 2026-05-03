@@ -315,4 +315,33 @@ public class OrderServiceImp implements OrderService{
         result.setData(deliveryInfo);
         return result;
     }
+
+    @Override
+    public Result deleteOrderByOrderNo(String order_no) {
+        // TODO Auto-generated method stub
+        Order order =orderMapper.selectOrderByOrderNo(order_no,null);
+        if(order != null){
+            Integer order_id = order.getOrder_id();
+            if(order.getStatus().getStatusId() == 0){ // 如果订单未支付
+                // 查询订单项详情
+                List<OrderItem> orderItems = orderMapper.selectOrderItemByOrderId(order_id);
+                System.out.println(orderItems);
+                // 恢复库存
+                for(OrderItem item : orderItems){
+                    Integer product_id = item.getProduct().getProductId();
+                    Integer quantity = item.getQuantity();
+                    Integer version = (Integer)orderMapper.selectStockById(product_id).get("version");
+                    orderMapper.restoreStock(product_id, quantity, version);
+                }
+                // 删除订单项
+                orderMapper.deleteOrderItemsByOrderId(order_id);
+                // 删除该订单
+                orderMapper.deleteOrderByOrderNo(order_no);
+            }
+        }
+        Result result = new Result();
+        result.setStatus(204);
+        result.setMsg("订单删除成功");
+        return result;
+    }
 }

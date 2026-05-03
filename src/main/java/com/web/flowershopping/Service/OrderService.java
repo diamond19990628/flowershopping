@@ -14,6 +14,8 @@ public interface OrderService {
 
     public Result selectOrderByUserId(Integer user_id, Integer status_id, String order_no);
 
+    public Result deleteOrderByOrderNo(String order_no);
+
     public Result changeOrderStatus(Integer status_id,Integer order_id);
 
     public Result changeOrderStatusByOrderNo(Integer status_id,String order_no);
