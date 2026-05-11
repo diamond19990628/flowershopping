@@ -1,1 +1,7 @@
-这是一个用spring boot制作成功的花店专用销售系统
+# Flower Shop API
+
+## Language
+
+- [中文](./README.zh-CN.md)
+- [English](./README.en.md)
+- [日本語](./README.ja.md)
