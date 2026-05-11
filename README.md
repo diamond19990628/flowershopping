@@ -25,7 +25,7 @@ Users without valid authentication tokens are not allowed to use restricted APIs
 
 During order creation, optimistic locking is implemented to prevent duplicate order creation and inventory overselling.
 
-The system uses MySQL transaction atomicity to ensure data consistency during order processing.
+Further, RabbitMQ is used to automatically cancel unpaid orders after a certain period of time and restore the inventory.
 
 ## Technology Stack
 
