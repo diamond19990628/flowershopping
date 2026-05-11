@@ -2,7 +2,7 @@
 
 ## Language
 
-- [English](./README.en.md)
+- [japanese](./README.en.md)
 
 # Flower Shop Backend System
 
