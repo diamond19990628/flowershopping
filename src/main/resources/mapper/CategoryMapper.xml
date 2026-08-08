@@ -94,7 +94,8 @@
             <if test="parent_category_id != null">
                 parent_category_id,
             </if>
-            update_date
+            update_date,
+            order_no
         </trim>
         <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
             <if test="category_name != null">
@@ -103,7 +104,15 @@
             <if test="parent_category_id != null">
                 #{parent_category_id},
             </if>
-            now()
+            now(),
+            (
+                SELECT IFNULL(max_order_no, -1) + 1
+                FROM (
+                    SELECT MAX(order_no) AS max_order_no
+                    FROM category_master
+                    WHERE parent_category_id = 0
+                ) t
+            )
         </trim>
     </insert>
 
