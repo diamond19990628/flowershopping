@@ -100,4 +100,26 @@ public class CategoryServiceImp implements CategoryService{
         }
         return result;
     }
+
+    @Override
+    public Result updateCategoryOrderWithbackward(Integer old_index, Integer new_index, Integer category_id) {
+        // TODO Auto-generated method stub
+        if(old_index==null || new_index==null){
+            throw new ParamException("参数不能为空");
+        }
+        if(old_index<new_index){
+            // 旧索引小于新索引，说明是向后移动
+            categoryMapper.updateCategoryOrderWithbackward(old_index, new_index, category_id);
+            categoryMapper.updateCategoryOrderWithSelf(old_index, new_index, category_id);
+        }else if(old_index>new_index){
+            // 旧索引大于新索引，说明是向前移动
+            categoryMapper.updateCategoryOrderWithforward(old_index, new_index, category_id);
+            categoryMapper.updateCategoryOrderWithSelf(old_index, new_index, category_id);
+        }
+        List<CategoriesAll> cateGoriesList = categoryMapper.selectAllParentChildCategories();
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(cateGoriesList);
+        return result;
+    }
 }

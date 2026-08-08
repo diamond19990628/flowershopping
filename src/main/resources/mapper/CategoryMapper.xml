@@ -12,6 +12,7 @@
 
     <select id="selectAllCategoryWithID">
         select * from category_master where category_id = #{category_id}
+        ORDER BY order_no ASC
     </select>
 
     <select id="selectAllCategories">
@@ -20,7 +21,28 @@
         from
             category_master cm1
         WHERE cm1.parent_category_id != 0
+        ORDER BY order_no ASC
     </select>
+
+    <!-- 更新分类顺序 -->
+    <update id="updateCategoryOrderWithbackward">
+        UPDATE category_master
+        SET order_no = order_no - 1
+        WHERE order_no &lt;= #{new_index} AND order_no &gt; #{old_index} AND parent_category_id = 0
+    </update>
+
+    <!-- 更新自己 -->
+    <update id="updateCategoryOrderWithSelf">
+        UPDATE category_master
+        SET order_no = #{new_index}
+        WHERE category_id = #{category_id}
+    </update>
+
+    <update id="updateCategoryOrderWithforward">
+        UPDATE category_master
+        SET order_no = order_no + 1
+        WHERE order_no &gt;= #{new_index} AND order_no &lt; #{old_index} AND parent_category_id = 0
+    </update>
 
     <!-- 查询子分类 -->
     <select id="selectCategoryWithID">
@@ -40,6 +62,7 @@
             category_master cm1
         WHERE
             cm1.parent_category_id = 0
+        ORDER BY cm1.order_no ASC
     </select>
 
     <select id="selectAllCategoriesInfoWithID" resultMap="CategoryWithChildMap">

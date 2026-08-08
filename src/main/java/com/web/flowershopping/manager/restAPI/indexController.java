@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.web.flowershopping.common.Exception.CreateException;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+
 
 
 
@@ -175,5 +177,17 @@ public class indexController {
         return result;
     }
     
-    
+    @PutMapping("/categories/{category_id}")
+    public Result putMethodName(HttpServletRequest request,@PathVariable("category_id")Integer category_id, @RequestBody Map<String, Object> requestBody) {
+        // String token = request.getHeader("token");
+        // sessions.auth_session(request, token);
+        System.out.println(requestBody);
+        if(!requestBody.containsKey("old_index") || !requestBody.containsKey("new_index")){
+            throw new CreateException("分类名不能为空");
+        }
+        Integer old_index = (Integer) requestBody.get("old_index");
+        Integer new_index = (Integer) requestBody.get("new_index");
+        Result result = categoryService.updateCategoryOrderWithbackward(old_index, new_index, category_id);
+        return result;
+    }
 }
