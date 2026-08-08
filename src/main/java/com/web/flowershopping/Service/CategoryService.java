@@ -14,5 +14,7 @@ public interface CategoryService {
 
     Result createNewCategory(Integer parent_category_id, String category_name);
 
+    Result updateCategoryOrderWithbackward(Integer old_index,Integer new_index,Integer category_id);
+
     Result deleteCategoryWithID(Integer category_id);
 }

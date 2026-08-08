@@ -52,4 +52,22 @@ public interface CategoryMapper {
     public CategoriesAll selectAllCategoriesInfoWithID(
         @Param("category_id")Long category_id
     );
+
+    public int updateCategoryOrderWithbackward(
+        @Param("old_index")Integer old_index,
+        @Param("new_index")Integer new_index,
+        @Param("category_id")Integer category_id
+    );
+
+    public int updateCategoryOrderWithforward(
+        @Param("old_index")Integer old_index,
+        @Param("new_index")Integer new_index,
+        @Param("category_id")Integer category_id
+    );
+
+    public int updateCategoryOrderWithSelf(
+        @Param("old_index")Integer old_index,
+        @Param("new_index")Integer new_index,
+        @Param("category_id")Integer category_id
+    );
 }
