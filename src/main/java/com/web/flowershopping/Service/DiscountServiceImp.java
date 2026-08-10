@@ -64,7 +64,7 @@ public class DiscountServiceImp implements DiscountService {
         }
         Discount discountDTO = new Discount();
         Integer discount_type_id = (Integer)param.get("discount_type_id");
-        if(discount_type_id != 1 && discount_type_id != 2){
+        if(discount_type_id != 1 && discount_type_id != 2 && discount_type_id != 3){
             throw new ParamException("discount_type_id参数错误");
         }
         discountDTO.setDiscount_scope((Integer)param.get("discount_scope"));
