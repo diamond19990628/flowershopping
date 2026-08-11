@@ -1,20 +1,24 @@
 package com.web.flowershopping.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.web.flowershopping.Entity.Card;
 import com.web.flowershopping.Entity.DeliveryAddress;
+import com.web.flowershopping.Entity.Discount;
 import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.shoppingCart;
+import com.web.flowershopping.Mapper.DiscountMapper;
 import com.web.flowershopping.Mapper.ProductMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
-import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.BusinessException;
 import com.web.flowershopping.common.Exception.ReadException;
+import com.web.flowershopping.common.getImagePath;
 
 import jakarta.annotation.Resource;
 @Service
@@ -25,6 +29,8 @@ public class shoppingCartServiceImp implements shoppingCartService {
     private ProductMapper productMapper;
     @Resource
     getImagePath getimagePath;
+    @Resource
+    private DiscountMapper discountMapper;
 
     @Override
     public Result selectCartItemsByUserId(int userId) {
@@ -105,6 +111,66 @@ public class shoppingCartServiceImp implements shoppingCartService {
         result.setStatus(200);
         result.setData(deliveryAddress);
         result.setMsg("success");
+        return result;
+    }
+
+    @Override
+    public Result calculateTotalAmount(Map<String, Object> Requestdata) {
+        // TODO Auto-generated method stub
+        List<Map<String, Object>> productInfoArray = (List<Map<String, Object>>) Requestdata.get("shoppingCart");
+        double totalAmount = 0;
+        for (Map<String, Object> productInfo : productInfoArray) {
+            if(productInfo.get("product")==null || productInfo.get("quantity")==null){
+                throw new ReadException("product或quantity参数缺失");
+            }
+            Map<String, Object> product = (Map<String, Object>) productInfo.get("product");
+            Integer productId = (Integer) product.get("productId");
+            if(productId == null){
+                throw new ReadException("productId参数缺失");
+            }
+            Integer quantity = (Integer) productInfo.get("quantity");
+            if(quantity == null){
+                throw new ReadException("quantity参数缺失");
+            }
+            // 查询商品金额
+            Integer productAmount = productMapper.selectProductAmountByProductId(productId);
+            if (productAmount == null) {
+                throw new ReadException("商品不存在");
+            }
+            // 计算总金额
+            totalAmount += productAmount * quantity;
+        }
+        // 2026-08-11 将最新开发的折扣功能集成到购物车总金额计算中
+        // 查询所有有效的折扣信息
+        List<Discount> discountList = discountMapper.selectDiscountListWithScope(1);
+        LocalDateTime now = LocalDateTime.now();
+        for(Discount discount : discountList){
+            // 判断折扣是否在有效期内
+            LocalDateTime startTime = discount.getStart_date();
+            LocalDateTime endTime = discount.getEnd_date();
+            if(startTime == null || endTime == null){
+                throw new ReadException("折扣的开始时间或结束时间为空");
+            }
+            if(now.isBefore(startTime) || now.isAfter(endTime)){
+                continue;
+            }
+            Integer discountTypeId = discount.getDiscountType().getDiscount_type_id();
+            if(discountTypeId == 1){
+                // 全场打折折扣
+                double discountRate = discount.getDiscount_rate();
+                totalAmount = totalAmount * (discountRate/10);
+            }else if(discountTypeId == 2){
+                // 满减折扣
+                double thresholdAmount = discount.getThreshold_amount();
+                double reductionAmount = discount.getReduction_amount();
+                if(totalAmount >= thresholdAmount){
+                    totalAmount = totalAmount - reductionAmount;
+                }
+            }
+        }
+        Result result = new Result();
+        result.setData(totalAmount);
+        result.setStatus(200);
         return result;
     }
 }
