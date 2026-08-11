@@ -14,6 +14,11 @@ public interface DiscountMapper {
         @Param("discount_scope")Integer discount_scope
     );
 
+    // 查询所有系统有效折扣
+    public List<Discount> selectDiscountListWithScopeAndStatus(
+        @Param("discount_scope")Integer discount_scope
+    );
+
     public List<DiscountType> selectDiscountTypeList();
 
     public Discount selectDiscountListWithDiscountId(

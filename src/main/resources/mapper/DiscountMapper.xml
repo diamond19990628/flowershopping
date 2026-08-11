@@ -43,6 +43,27 @@
     where discount_scope = 1
     </select>
 
+    <!-- 查询目前所有系统有效折扣 -->
+     <select id="selectDiscountListWithScopeAndStatus" resultMap="discountMap">
+        select 
+            dm.discount_id,
+            dm.discount_type_id,
+            dt.discount_type_name,
+            dm.status,
+            dm.discount_title,
+            dm.discount_rate,
+            dm.threshold_amount,
+            dm.reduction_amount,
+            dm.booking_time,
+            dm.advance_days,
+            dm.start_date,
+            dm.end_date
+        from discount_master dm
+        INNER JOIN discount_type_master dt
+        ON dm.discount_type_id = dt.discount_type_id
+        where discount_scope = #{discount_scope} AND status = 1
+     </select>
+
     <select id="selectDiscountListWithDiscountId" resultMap="discountMap">
         select 
             dm.discount_id,

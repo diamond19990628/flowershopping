@@ -111,6 +111,12 @@ public class DiscountServiceImp implements DiscountService {
             discountDTO.setThreshold_amount(threshold_amount);
             discountDTO.setReduction_amount(reduction_amount);
         }else if(param.get("discount_type_id").equals(3)){
+            Object discountRate = param.get("discount_rate");
+            double rate = ((Number) discountRate).doubleValue();
+            if(rate < 1 || rate > 10){
+                throw new ParamException("discount_rate参数范围必须在1-10之间");
+            }
+            discountDTO.setDiscount_rate(rate);
             String booking_time_str = (String)param.get("booking_time");
             LocalDateTime booking_time = LocalDateTime.parse(booking_time_str,formatter);
             Integer advance_days = (Integer)param.get("advance_days");

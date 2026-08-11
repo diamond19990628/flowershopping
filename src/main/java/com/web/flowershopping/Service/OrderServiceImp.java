@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.web.flowershopping.Entity.DeliveryAddress;
+import com.web.flowershopping.Entity.Discount;
 import com.web.flowershopping.Entity.Order;
 import com.web.flowershopping.Entity.OrderItem;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.Status;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Entity.deliveryType;
+import com.web.flowershopping.Mapper.DiscountMapper;
 import com.web.flowershopping.Mapper.OrderMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
 import com.web.flowershopping.Mapper.UserLoginMapper;
@@ -51,6 +53,8 @@ public class OrderServiceImp implements OrderService{
     getImagePath getImagePath;
     @Resource
     RabbitMQService rabbitMQService;
+    @Resource
+    DiscountMapper discountMapper;
     @Autowired
     WeChat getwechatopenid;
     @Value("${wechat.appid}")
@@ -116,6 +120,7 @@ public class OrderServiceImp implements OrderService{
     @Override
     public Result createOrder(List<OrderItem> product_info_array, Integer delivery_type_id, Integer delivery_address_id,
             LocalDateTime delivery_date, Integer user_id, Integer total_amount, String requestNo) {
+        Double total_amount_double = total_amount.doubleValue();
         for(OrderItem orderItem : product_info_array){
             if(orderItem.getProduct().getProductId() == null || orderItem.getQuantity() == null){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "订单项参数不完整");
@@ -137,9 +142,52 @@ public class OrderServiceImp implements OrderService{
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "商品库存更新失败，可能是由于库存不足或版本号过期，请重试");
             }
         }
+        LocalDateTime now = LocalDateTime.now();
+        // 实现预约折扣活动,重新计算total_amount
+        // 2026-08-11 将最新开发的折扣功能集成到购物车总金额计算中
+        // 查询所有有效的折扣信息
+        List<Discount> discountList = discountMapper.selectDiscountListWithScope(1);
+        for(Discount discount : discountList){
+            // 判断折扣是否在有效期内
+            LocalDateTime startTime = discount.getStart_date();
+            LocalDateTime endTime = discount.getEnd_date();
+            if(startTime == null || endTime == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "折扣的开始时间或结束时间为空");
+            }
+            if(now.isBefore(startTime) || now.isAfter(endTime)){
+                continue;
+            }
+            
+            Integer discountTypeId = discount.getDiscountType().getDiscount_type_id();
+            if(discountTypeId == 1){
+                // 全场打折折扣
+                double discountRate = discount.getDiscount_rate();
+                total_amount_double = (total_amount_double * (discountRate / 10));
+            }else if(discountTypeId == 2){
+                // 满减折扣
+                double thresholdAmount = discount.getThreshold_amount();
+                double reductionAmount = discount.getReduction_amount();
+                if(total_amount_double >= thresholdAmount){
+                    total_amount_double -= reductionAmount;
+                }
+            }else if(discountTypeId == 3){
+                // 预约折扣
+                LocalDateTime bookingTime = discount.getBooking_time();
+                System.out.println("预约时间为：" + bookingTime);
+                Integer advanceDays = discount.getAdvance_days();
+                LocalDateTime earliestBookingDate = now.plusDays(advanceDays);
+                System.out.println(earliestBookingDate);
+                if(bookingTime.isAfter(earliestBookingDate)){
+                    double discountRate = discount.getDiscount_rate();
+                    System.out.println("预约折扣率为：" + discountRate);
+                    total_amount_double = (total_amount_double * (discountRate / 10));
+                }
+            }
+
+        }
+        System.out.println("计算后的总金额为：" + total_amount_double);
         // 订单创建逻辑
         //创建订单号
-        LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         String time = now.format(formatter);
@@ -158,7 +206,7 @@ public class OrderServiceImp implements OrderService{
         user.setUser_id(user_id);
         order.setOrder_no(order_no);
         order.setUser(user);
-        order.setTotal_amount(total_amount);
+        order.setTotal_amount(total_amount_double);
         order.setDeliverytype(deliveryType);
         deliveryAddress.setDelivery_address_id(delivery_address_id);
         order.setDeliveryAddress(deliveryAddress);
