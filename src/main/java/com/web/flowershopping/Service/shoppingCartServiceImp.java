@@ -1,6 +1,7 @@
 package com.web.flowershopping.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,9 @@ import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.shoppingCart;
 import com.web.flowershopping.Mapper.ProductMapper;
 import com.web.flowershopping.Mapper.ShoppingCartMapper;
-import com.web.flowershopping.common.getImagePath;
 import com.web.flowershopping.common.Exception.BusinessException;
 import com.web.flowershopping.common.Exception.ReadException;
+import com.web.flowershopping.common.getImagePath;
 
 import jakarta.annotation.Resource;
 @Service
@@ -105,6 +106,38 @@ public class shoppingCartServiceImp implements shoppingCartService {
         result.setStatus(200);
         result.setData(deliveryAddress);
         result.setMsg("success");
+        return result;
+    }
+
+    @Override
+    public Result calculateTotalAmount(Map<String, Object> Requestdata) {
+        // TODO Auto-generated method stub
+        List<Map<String, Object>> productInfoArray = (List<Map<String, Object>>) Requestdata.get("shoppingCart");
+        Integer totalAmount = 0;
+        for (Map<String, Object> productInfo : productInfoArray) {
+            if(productInfo.get("product")==null || productInfo.get("quantity")==null){
+                throw new ReadException("product或quantity参数缺失");
+            }
+            Map<String, Object> product = (Map<String, Object>) productInfo.get("product");
+            Integer productId = (Integer) product.get("productId");
+            if(productId == null){
+                throw new ReadException("productId参数缺失");
+            }
+            Integer quantity = (Integer) productInfo.get("quantity");
+            if(quantity == null){
+                throw new ReadException("quantity参数缺失");
+            }
+            // 查询商品金额
+            Integer productAmount = productMapper.selectProductAmountByProductId(productId);
+            if (productAmount == null) {
+                throw new ReadException("商品不存在");
+            }
+            // 计算总金额
+            totalAmount += productAmount * quantity;
+        }
+        Result result = new Result();
+        result.setData(totalAmount);
+        result.setStatus(200);
         return result;
     }
 }

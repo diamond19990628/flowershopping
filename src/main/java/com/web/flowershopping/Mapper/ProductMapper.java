@@ -69,4 +69,8 @@ public interface ProductMapper {
     void deleteProductCategory(@Param("product_id") Integer product_id);
 
     void deleteProductStock(@Param("product_id") Integer product_id);
+
+    public int selectProductAmountByProductId(
+        @Param("product_id") Integer product_id
+    );
 }

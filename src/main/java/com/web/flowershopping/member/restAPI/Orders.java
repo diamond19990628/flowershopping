@@ -27,6 +27,7 @@ import com.web.flowershopping.Entity.Product;
 import com.web.flowershopping.Entity.Result;
 import com.web.flowershopping.Entity.User;
 import com.web.flowershopping.Mapper.OrderMapper;
+import com.web.flowershopping.Mapper.ProductMapper;
 import com.web.flowershopping.Service.OrderService;
 import com.web.flowershopping.common.WXPayUtility;
 import com.web.flowershopping.common.WeChat;
@@ -54,6 +55,8 @@ public class Orders {
     @Resource
     OrderMapper orderMapper;
     @Resource
+    ProductMapper productMapper;
+    @Resource
     WeChat wechat;
     @PostMapping("/member/orders")
     public Result createOrder(HttpServletRequest request, @RequestBody Map<String, Object> Requestdata) {
@@ -61,13 +64,15 @@ public class Orders {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
         List<Map<String, Object>> rawList =(List<Map<String, Object>>) Requestdata.get("product_info_array");
-
+        int amount = 0;
         List<OrderItem> orderItems = new ArrayList<>();
         for(Map<String, Object> item : rawList){
             OrderItem orderItemRequest = new OrderItem();
             Product product = new Product();
             Card card = new Card();
             product.setProductId((Integer)item.get("productId"));
+            // 查询该商品金额
+            Integer productAmount = productMapper.selectProductAmountByProductId((Integer)item.get("productId"));
             card.setCard_id((Integer) item.get("cardId"));
             orderItemRequest.setProduct(product);
             orderItemRequest.setCard(card);
@@ -75,9 +80,10 @@ public class Orders {
             orderItemRequest.setQuantity((Integer) item.get("quantity"));
             orderItemRequest.setComment((String) item.get("comment"));
             orderItems.add(orderItemRequest);
+            amount += (Integer) item.get("quantity") * productAmount;
         }
         Integer user_id = (Integer) Requestdata.get("user_id");
-        Integer total_amount = (Integer) Requestdata.get("total_amount");
+        Integer total_amount = amount;
         Integer delivery_type_id = (Integer) Requestdata.get("delivery_type_id");
         Integer delivery_address_id = (Integer) Requestdata.get("delivery_address_id");
         LocalDateTime delivery_date_str = LocalDateTime.parse(Requestdata.get("delivery_date").toString(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

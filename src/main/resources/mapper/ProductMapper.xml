@@ -316,4 +316,9 @@
         DELETE FROM stock_master
         WHERE product_id = #{product_id}
     </delete>
+
+    <!-- 查询产品金额 -->
+    <select id="selectProductAmountByProductId" resultType="int">
+        SELECT amount FROM product_master WHERE product_id = #{product_id}
+    </select>
 </mapper>

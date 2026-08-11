@@ -55,10 +55,18 @@ public class shoppingCart {
     // 获取送货地址
     @GetMapping("/member/deliveryAddress/{user_id}")
     public Result getDeliveryAddress(HttpServletRequest request,@PathVariable("user_id") Integer user_id) {
-        // String token = request.getHeader("token");
-        // sessions.auth_session(request, token);
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
         Result result = shoppingCartService.selectDeliveryAddressByUserId(user_id);
         return result;
     }
-    
+
+    // 获取总金额
+    @PostMapping("/member/shoppingCart/totalAmount")
+    public Result getTotalAmount(HttpServletRequest request,@RequestBody Map<String, Object> Requestdata) {
+        String token = request.getHeader("token");
+        sessions.auth_session(request, token);
+        Result result = shoppingCartService.calculateTotalAmount(Requestdata);
+        return result;
+    }
 }

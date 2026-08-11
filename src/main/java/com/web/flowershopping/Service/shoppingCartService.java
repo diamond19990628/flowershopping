@@ -13,4 +13,6 @@ public interface shoppingCartService {
     Result deleteCartItem(int user_id, int product_id);
 
     Result selectDeliveryAddressByUserId(int user_id);
+
+    Result calculateTotalAmount(java.util.Map<String, Object> Requestdata);
 }
