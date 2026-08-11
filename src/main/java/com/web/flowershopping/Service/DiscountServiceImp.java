@@ -184,4 +184,14 @@ public class DiscountServiceImp implements DiscountService {
         result.setMsg("更新成功");
         return result;
     }
+
+    @Override
+    public Result getDiscountFromMember() {
+        // TODO Auto-generated method stub
+        List<Discount> discountList = discountMapper.selectDiscountListFromMember();
+        Result result = new Result();
+        result.setStatus(200);
+        result.setData(discountList);
+        return result;
+    }
 }
