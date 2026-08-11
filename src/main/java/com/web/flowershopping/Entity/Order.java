@@ -7,7 +7,7 @@ public class Order {
     private int order_id;
     private String order_no;
     private User user;
-    private int total_amount;
+    private double total_amount;
     private Integer is_refunding;
     private Status status;
     private Integer pay_status;
@@ -35,17 +35,29 @@ public class Order {
     public void setUser(User user) {
         this.user = user;
     }
-    public int getTotal_amount() {
+    public double getTotal_amount() {
         return total_amount;
     }
-    public void setTotal_amount(int total_amount) {
+    public void setTotal_amount(double total_amount) {
         this.total_amount = total_amount;
+    }
+    public Integer getIs_refunding() {
+        return is_refunding;
+    }
+    public void setIs_refunding(Integer is_refunding) {
+        this.is_refunding = is_refunding;
     }
     public Status getStatus() {
         return status;
     }
     public void setStatus(Status status) {
         this.status = status;
+    }
+    public Integer getPay_status() {
+        return pay_status;
+    }
+    public void setPay_status(Integer pay_status) {
+        this.pay_status = pay_status;
     }
     public deliveryType getDeliverytype() {
         return deliverytype;
@@ -83,25 +95,13 @@ public class Order {
     public void setOrder_items(List<OrderItem> order_items) {
         this.order_items = order_items;
     }
-    public Integer getPay_status() {
-        return pay_status;
-    }
-    public void setPay_status(Integer pay_status) {
-        this.pay_status = pay_status;
-    }
-    public Integer getIs_refunding() {
-        return is_refunding;
-    }
-    public void setIs_refunding(Integer is_refunding) {
-        this.is_refunding = is_refunding;
-    }
-
     @Override
     public String toString() {
         return "Order [order_id=" + order_id + ", order_no=" + order_no + ", user=" + user + ", total_amount="
-                + total_amount + ", status=" + status + ", pay_status=" + pay_status + ", deliverytype=" + deliverytype
-                + ", deliveryAddress=" + deliveryAddress + ", delivery_date=" + delivery_date + ", create_time="
-                + create_time + ", update_time=" + update_time + ", order_items=" + order_items + ", is_refunding=" + is_refunding + "]";
+                + total_amount + ", is_refunding=" + is_refunding + ", status=" + status + ", pay_status=" + pay_status
+                + ", deliverytype=" + deliverytype + ", deliveryAddress=" + deliveryAddress + ", delivery_date="
+                + delivery_date + ", create_time=" + create_time + ", update_time=" + update_time + ", order_items="
+                + order_items + "]";
     }
     
 }
