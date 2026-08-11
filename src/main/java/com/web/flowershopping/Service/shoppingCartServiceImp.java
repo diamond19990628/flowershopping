@@ -187,11 +187,11 @@ public class shoppingCartServiceImp implements shoppingCartService {
                 double reductionAmount = discount.getReduction_amount();
                 if(totalAmount >= thresholdAmount){
                     totalAmount = totalAmount - reductionAmount;
+                    sum_discount_amount+=reductionAmount;
+                    DiscountObj.put("discount_count", reductionAmount);
+                    DiscountObj.put("discount_title", discount.getDiscount_title());
+                    resultList.add(DiscountObj);
                 }
-                sum_discount_amount+=reductionAmount;
-                DiscountObj.put("discount_count", reductionAmount);
-                DiscountObj.put("discount_title", discount.getDiscount_title());
-                resultList.add(DiscountObj);
             }else if (discountTypeId == 3 && deliveryDateFormattered != null) {
                 Integer advanceDays = discount.getAdvance_days();
                 LocalDate salesDateTime = discount.getBooking_time().toLocalDate();
@@ -207,9 +207,10 @@ public class shoppingCartServiceImp implements shoppingCartService {
                         totalAmount = totalAmount * (discountRate/10);
                         DiscountObj.put("discount_title", discount.getDiscount_title());
                         DiscountObj.put("discount_count", discount_amount_int);
+                        resultList.add(DiscountObj);
                     }
                 }
-                resultList.add(DiscountObj);
+                
             }
             
         }
