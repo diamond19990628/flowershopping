@@ -173,7 +173,9 @@ public class OrderServiceImp implements OrderService{
             }else if(discountTypeId == 3){
                 // 预约折扣
                 LocalDateTime bookingTime = discount.getBooking_time();
-                System.out.println("预约时间为：" + bookingTime);
+                if (!delivery_date.equals(bookingTime)) {
+                    continue;
+                }
                 Integer advanceDays = discount.getAdvance_days();
                 LocalDateTime earliestBookingDate = now.plusDays(advanceDays);
                 System.out.println(earliestBookingDate);
@@ -187,6 +189,7 @@ public class OrderServiceImp implements OrderService{
         }
         // 将金额转换为整数，避免浮点数计算误差
         Integer total_amount_int = (int) Math.round(total_amount_double);
+        System.out.println(total_amount_int);
         // 订单创建逻辑
         //创建订单号
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");

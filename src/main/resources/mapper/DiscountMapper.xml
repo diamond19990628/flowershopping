@@ -85,6 +85,26 @@
 
     </select>
 
+    <select id="selectDiscountListFromMember" resultMap="discountMap">
+        select 
+            dm.discount_id,
+            dm.discount_type_id,
+            dt.discount_type_name,
+            dm.status,
+            dm.discount_title,
+            dm.discount_rate,
+            dm.threshold_amount,
+            dm.reduction_amount,
+            dm.booking_time,
+            dm.advance_days,
+            dm.start_date,
+            dm.end_date
+        from discount_master dm
+        INNER JOIN discount_type_master dt
+        ON dm.discount_type_id = dt.discount_type_id
+        where dm.status = 1 AND dt.discount_type_id != 3
+    </select>
+
     <select id="selectDiscountTypeList" resultMap="discountTypeMap">
         select * from discount_type_master
     </select>
