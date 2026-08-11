@@ -1,6 +1,5 @@
 package com.web.flowershopping.member.restAPI;
 
-import java.math.BigDecimal;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,9 +131,7 @@ public class Orders {
         String token = request.getHeader("token");
         sessions.auth_session(request, token);
         String order_no = (String) Requestdata.get("order_no");
-        double total_amount = (double) Requestdata.get("total_amount");
-        BigDecimal price = new BigDecimal(total_amount);
-        Integer total_amount_int = price.multiply(new BigDecimal(100)).intValue();
+        Integer total_amount = (Integer) Requestdata.get("total_amount");
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user_id");
         System.out.println((User) session.getAttribute("user_id"));
@@ -146,7 +143,7 @@ public class Orders {
             throw new ParamException("用户未绑定微信，无法使用微信支付");
         }
         // 微信支付逻辑
-        Result result = orderService.pay(order_no, total_amount_int, openId);
+        Result result = orderService.pay(order_no, total_amount, openId);
         return result;
     }
 

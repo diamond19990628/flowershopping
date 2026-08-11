@@ -185,7 +185,8 @@ public class OrderServiceImp implements OrderService{
             }
 
         }
-        System.out.println("计算后的总金额为：" + total_amount_double);
+        // 将金额转换为整数，避免浮点数计算误差
+        Integer total_amount_int = (int) Math.round(total_amount_double);
         // 订单创建逻辑
         //创建订单号
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
@@ -206,7 +207,7 @@ public class OrderServiceImp implements OrderService{
         user.setUser_id(user_id);
         order.setOrder_no(order_no);
         order.setUser(user);
-        order.setTotal_amount(total_amount_double);
+        order.setTotal_amount(total_amount_int);
         order.setDeliverytype(deliveryType);
         deliveryAddress.setDelivery_address_id(delivery_address_id);
         order.setDeliveryAddress(deliveryAddress);
