@@ -1,6 +1,10 @@
 package com.web.flowershopping.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +122,12 @@ public class shoppingCartServiceImp implements shoppingCartService {
     public Result calculateTotalAmount(Map<String, Object> Requestdata) {
         // TODO Auto-generated method stub
         List<Map<String, Object>> productInfoArray = (List<Map<String, Object>>) Requestdata.get("shoppingCart");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String deliveryDate = (String)Requestdata.get("deliveryDate");
+        LocalDate deliveryDateFormattered = null;
+        if (deliveryDate!=null) {
+            deliveryDateFormattered = LocalDate.parse(deliveryDate,formatter);
+        }
         double totalAmount = 0;
         for (Map<String, Object> productInfo : productInfoArray) {
             if(productInfo.get("product")==null || productInfo.get("quantity")==null){
@@ -142,12 +152,18 @@ public class shoppingCartServiceImp implements shoppingCartService {
         }
         // 2026-08-11 将最新开发的折扣功能集成到购物车总金额计算中
         // 查询所有有效的折扣信息
+        double sum_discount_amount = 0;
         List<Discount> discountList = discountMapper.selectDiscountListWithScope(1);
+        Map<String,Object> mapdata = new HashMap<String,Object>();
+        mapdata.put("original_amount", totalAmount);
+        ArrayList<Map<String,Object>> resultList = new ArrayList<Map<String,Object>>();
         LocalDateTime now = LocalDateTime.now();
         for(Discount discount : discountList){
             // 判断折扣是否在有效期内
+            Map<String,Object> DiscountObj = new HashMap<String,Object>();
             LocalDateTime startTime = discount.getStart_date();
             LocalDateTime endTime = discount.getEnd_date();
+            double discount_amount = 0;
             if(startTime == null || endTime == null){
                 throw new ReadException("折扣的开始时间或结束时间为空");
             }
@@ -158,7 +174,13 @@ public class shoppingCartServiceImp implements shoppingCartService {
             if(discountTypeId == 1){
                 // 全场打折折扣
                 double discountRate = discount.getDiscount_rate();
+                discount_amount = totalAmount-totalAmount * (discountRate/10);
+                Integer discount_amount_int = (int)Math.round(discount_amount);
+                sum_discount_amount += discount_amount_int;
                 totalAmount = totalAmount * (discountRate/10);
+                DiscountObj.put("discount_count", discount_amount_int);
+                DiscountObj.put("discount_title", discount.getDiscount_title());
+                resultList.add(DiscountObj);
             }else if(discountTypeId == 2){
                 // 满减折扣
                 double thresholdAmount = discount.getThreshold_amount();
@@ -166,10 +188,37 @@ public class shoppingCartServiceImp implements shoppingCartService {
                 if(totalAmount >= thresholdAmount){
                     totalAmount = totalAmount - reductionAmount;
                 }
+                sum_discount_amount+=reductionAmount;
+                DiscountObj.put("discount_count", reductionAmount);
+                DiscountObj.put("discount_title", discount.getDiscount_title());
+                resultList.add(DiscountObj);
+            }else if (discountTypeId == 3 && deliveryDateFormattered != null) {
+                Integer advanceDays = discount.getAdvance_days();
+                LocalDate salesDateTime = discount.getBooking_time().toLocalDate();
+                if(!salesDateTime.equals(deliveryDateFormattered)){
+                    continue;
+                }else{
+                    LocalDate afterdays = now.plusDays(advanceDays).toLocalDate();
+                    if (salesDateTime.isAfter(afterdays)) {
+                        double discountRate = discount.getDiscount_rate();
+                        discount_amount = totalAmount-totalAmount * (discountRate/10);
+                        Integer discount_amount_int = (int)Math.round(discount_amount);
+                        sum_discount_amount += discount_amount_int;
+                        totalAmount = totalAmount * (discountRate/10);
+                        DiscountObj.put("discount_title", discount.getDiscount_title());
+                        DiscountObj.put("discount_count", discount_amount_int);
+                    }
+                }
+                resultList.add(DiscountObj);
             }
+            
         }
+        Integer total_amount_int = (int) Math.round(totalAmount);
+        mapdata.put("total_amount", total_amount_int);
+        mapdata.put("discount_data", resultList);
+        mapdata.put("sum_discount_amount", sum_discount_amount);
         Result result = new Result();
-        result.setData(totalAmount);
+        result.setData(mapdata);
         result.setStatus(200);
         return result;
     }

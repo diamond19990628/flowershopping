@@ -21,6 +21,8 @@ public interface DiscountMapper {
 
     public List<DiscountType> selectDiscountTypeList();
 
+    public List<Discount> selectDiscountListFromMember();
+
     public Discount selectDiscountListWithDiscountId(
         @Param("discount_id")Integer discount_id
     );

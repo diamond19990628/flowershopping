@@ -17,4 +17,6 @@ public interface DiscountService {
     public Result deleteDiscount(Integer discount_id);
 
     public Result updateDiscount(Integer discount_id);
+
+    public Result getDiscountFromMember();
 }
