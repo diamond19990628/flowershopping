@@ -1,5 +1,6 @@
 package com.web.flowershopping.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -172,16 +173,17 @@ public class OrderServiceImp implements OrderService{
                 }
             }else if(discountTypeId == 3){
                 // 预约折扣
-                LocalDateTime bookingTime = discount.getBooking_time();
-                if (!delivery_date.equals(bookingTime)) {
+                LocalDate booking_date = discount.getBooking_time().toLocalDate();
+                LocalDate delivery_date_change = delivery_date.toLocalDate();
+                if (!delivery_date_change.equals(booking_date)) {
                     continue;
                 }
                 Integer advanceDays = discount.getAdvance_days();
-                LocalDateTime earliestBookingDate = now.plusDays(advanceDays);
+                LocalDate nowDate = LocalDate.now();
+                LocalDate earliestBookingDate = nowDate.plusDays(advanceDays);
                 System.out.println(earliestBookingDate);
-                if(bookingTime.isAfter(earliestBookingDate)){
+                if(booking_date.isAfter(earliestBookingDate)){
                     double discountRate = discount.getDiscount_rate();
-                    System.out.println("预约折扣率为：" + discountRate);
                     total_amount_double = (total_amount_double * (discountRate / 10));
                 }
             }
